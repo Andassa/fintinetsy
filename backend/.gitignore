@@ -1,0 +1,14 @@
+# Backend
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+uplift.db
+*.db
+.coverage
+htmlcov/
+.DS_Store
