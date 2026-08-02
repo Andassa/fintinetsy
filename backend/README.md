@@ -18,31 +18,40 @@ uvicorn app.main:app --reload --port 8000
 
 ## Auth endpoints (`/api/v1/auth`)
 
-| Method | Path | Auth |
-|--------|------|------|
-| POST | `/register` | public |
-| POST | `/login` | public |
-| POST | `/refresh` | public (refresh body) |
-| POST | `/logout` | Bearer |
-| GET | `/reset-methods` | public |
-| POST | `/password-reset` | public |
-| POST | `/password-reset/resend` | public |
-| GET | `/me` | Bearer |
+| Method | Path                     | Auth                  |
+| ------ | ------------------------ | --------------------- |
+| POST   | `/register`              | public                |
+| POST   | `/login`                 | public                |
+| POST   | `/refresh`               | public (refresh body) |
+| POST   | `/logout`                | Bearer                |
+| GET    | `/reset-methods`         | public                |
+| POST   | `/password-reset`        | public                |
+| POST   | `/password-reset/resend` | public                |
+| GET    | `/me`                    | Bearer                |
 
 ## Assessment / Users
 
-| Method | Path | Auth |
-|--------|------|------|
-| GET | `/assessment/config` | public |
-| GET | `/users/me` | Bearer |
-| GET | `/users/me/assessment` | Bearer |
-| PUT | `/users/me/assessment` | Bearer |
+| Method | Path                   | Auth   |
+| ------ | ---------------------- | ------ |
+| GET    | `/assessment/config`   | public |
+| GET    | `/users/me`            | Bearer |
+| GET    | `/users/me/assessment` | Bearer |
+| PUT    | `/users/me/assessment` | Bearer |
 
 ## Home
 
-| Method | Path | Auth |
-|--------|------|------|
-| GET | `/home/dashboard` | Bearer |
+| Method | Path              | Auth   |
+| ------ | ----------------- | ------ |
+| GET    | `/home/dashboard` | Bearer |
+
+## Workouts
+
+| Method | Path                              | Auth                        |
+| ------ | --------------------------------- | --------------------------- |
+| GET    | `/workouts/browse`                | public                      |
+| GET    | `/workouts/categories/{id}`       | public (`cursor`, `limit`)  |
+| GET    | `/workouts/{workout_id}`          | public                      |
+| POST   | `/workouts/{workout_id}/complete` | Bearer                      |
 
 ## Tests
 

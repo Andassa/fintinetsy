@@ -7,6 +7,12 @@ from app.models.home import (
     HomeFeaturedWorkout,
 )
 from app.models.user import PasswordResetRequest, RefreshToken, User
+from app.models.workout import (
+    Workout,
+    WorkoutBrowseSeed,
+    WorkoutCategory,
+    WorkoutSession,
+)
 
 __all__ = [
     "User",
@@ -20,4 +26,8 @@ __all__ = [
     "HomeFeaturedMeal",
     "HomeActivityBlobLayout",
     "HomeAiCoachCardSeed",
+    "WorkoutCategory",
+    "Workout",
+    "WorkoutBrowseSeed",
+    "WorkoutSession",
 ]
