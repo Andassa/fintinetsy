@@ -10,6 +10,7 @@ from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
 from app import models  # noqa: F401 — register models
 from app.services.assessment_service import AssessmentService
+from app.services.home_service import HomeService
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(_: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     async with AsyncSessionLocal() as session:
         await AssessmentService().ensure_seed_data(session)
+        await HomeService().ensure_seed_data(session)
         await session.commit()
     yield
     await engine.dispose()

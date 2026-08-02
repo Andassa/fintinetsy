@@ -38,6 +38,12 @@ uvicorn app.main:app --reload --port 8000
 | GET | `/users/me/assessment` | Bearer |
 | PUT | `/users/me/assessment` | Bearer |
 
+## Home
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/home/dashboard` | Bearer |
+
 ## Tests
 
 ```bash
