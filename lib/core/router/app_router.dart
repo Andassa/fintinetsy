@@ -35,6 +35,10 @@ import '../../features/errors/presentation/screens/error_state_screens.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/account_settings_screen.dart';
 import '../../features/settings/presentation/screens/notifications_screen.dart';
+import '../../features/workout/presentation/screens/workout_browse_screen.dart';
+import '../../features/workout/presentation/screens/workout_category_screen.dart';
+import '../../features/workout/presentation/screens/workout_complete_screen.dart';
+import '../../features/workout/presentation/screens/workout_preview_screen.dart';
 import 'route_names.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -235,6 +239,26 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.aiChatThread,
       name: RouteNames.aiChatThread,
       builder: (context, state) => const AiChatThreadScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.workoutBrowse,
+      name: RouteNames.workoutBrowse,
+      builder: (context, state) => const WorkoutBrowseScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.workoutCategory,
+      name: RouteNames.workoutCategory,
+      builder: (context, state) => const WorkoutCategoryScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.workoutPreview,
+      name: RouteNames.workoutPreview,
+      builder: (context, state) => const WorkoutPreviewScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.workoutComplete,
+      name: RouteNames.workoutComplete,
+      builder: (context, state) => const WorkoutCompleteScreen(),
     ),
   ],
 );

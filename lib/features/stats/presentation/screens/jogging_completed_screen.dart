@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -95,7 +96,9 @@ class _JoggingCompletedScreenState extends State<JoggingCompletedScreen> {
                       .toList(),
                 ),
                 const Spacer(),
-                Container(
+                GestureDetector(
+                  onTap: () => context.pushNamed(RouteNames.directions),
+                  child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceAlt,
@@ -139,11 +142,12 @@ class _JoggingCompletedScreenState extends State<JoggingCompletedScreen> {
                     ],
                   ),
                 ),
+                ),
                 const SizedBox(height: 20),
                 PrimaryButton(
                   label: 'Great, Thanks',
                   showIcon: false,
-                  onPressed: () => context.pop(),
+                  onPressed: () => context.goNamed(RouteNames.home),
                 ),
                 const SizedBox(height: 12),
               ],

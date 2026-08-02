@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
@@ -103,7 +104,7 @@ class _AiChatThreadScreenState extends State<AiChatThreadScreen> {
                     ),
                     CircularIconButton(
                       icon: Icons.more_horiz,
-                      onPressed: () {},
+                      onPressed: () => context.pushNamed(RouteNames.aiChats),
                     ),
                   ],
                 ),

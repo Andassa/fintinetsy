@@ -136,7 +136,7 @@ class _AiChatsScreenState extends State<AiChatsScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () => context.pushNamed(RouteNames.aiCoachHub),
                         child: const Text(
                           'See all',
                           style: TextStyle(

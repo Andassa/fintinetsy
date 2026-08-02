@@ -133,7 +133,13 @@ class NoInternetScreen extends StatelessWidget {
       title: 'Not Found',
       subtitle: "It seems you don't have internet",
       secondaryLabel: 'Refresh or try again',
-      onSecondary: () {},
+      onSecondary: () {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.goNamed(RouteNames.home);
+        }
+      },
       primaryLabel: 'Take me home',
       onPrimary: () => context.goNamed(RouteNames.home),
     );
@@ -150,7 +156,7 @@ class PermissionDeniedScreen extends StatelessWidget {
       title: 'Not Found',
       subtitle: "Hey you don't have permission",
       secondaryLabel: 'Contact Support',
-      onSecondary: () {},
+      onSecondary: () => context.pushNamed(RouteNames.aiChatThread),
       primaryLabel: 'Take me home',
       onPrimary: () => context.goNamed(RouteNames.home),
     );

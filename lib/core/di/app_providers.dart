@@ -26,6 +26,8 @@ import '../../features/settings/data/repositories/fake_settings_repository.dart'
 import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/stats/data/repositories/fake_stats_repository.dart';
 import '../../features/stats/domain/repositories/stats_repository.dart';
+import '../../features/workout/data/repositories/fake_workout_repository.dart';
+import '../../features/workout/domain/repositories/workout_repository.dart';
 import '../theme/theme_controller.dart';
 
 List<SingleChildWidget> buildAppProviders() {
@@ -38,6 +40,7 @@ List<SingleChildWidget> buildAppProviders() {
   final settingsRepository = FakeSettingsRepository();
   final profileRepository = FakeProfileRepository();
   final coachRepository = FakeCoachRepository();
+  final workoutRepository = FakeWorkoutRepository();
   final assessmentSession = AssessmentSession(assessmentRepository)..init();
   final themeController = ThemeController();
 
@@ -59,5 +62,6 @@ List<SingleChildWidget> buildAppProviders() {
     Provider<SettingsRepository>.value(value: settingsRepository),
     Provider<ProfileRepository>.value(value: profileRepository),
     Provider<CoachRepository>.value(value: coachRepository),
+    Provider<WorkoutRepository>.value(value: workoutRepository),
   ];
 }

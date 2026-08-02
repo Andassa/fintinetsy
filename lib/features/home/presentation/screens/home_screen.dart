@@ -70,7 +70,27 @@ class _HomeScreenState extends State<HomeScreen> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : _error != null
-                ? Center(child: Text('Error: $_error'))
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Something went wrong'),
+                          const SizedBox(height: 16),
+                          TextButton(
+                            onPressed: _load,
+                            child: const Text('Retry'),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                context.pushNamed(RouteNames.noInternet),
+                            child: const Text('Check connection'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 : RefreshIndicator(
                     onRefresh: _load,
                     child: CustomScrollView(
@@ -140,8 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         SliverToBoxAdapter(
                           child: SectionHeader(
                             title: 'Workouts',
-                            onAction: () => context
-                                .pushNamed(RouteNames.joggingCompleted),
+                            onAction: () =>
+                                context.pushNamed(RouteNames.workoutBrowse),
                           ),
                         ),
                         const SliverToBoxAdapter(child: SizedBox(height: 14)),
@@ -150,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: GestureDetector(
                               onTap: () =>
-                                  context.pushNamed(RouteNames.directions),
+                                  context.pushNamed(RouteNames.workoutPreview),
                               child: WorkoutHeroCard(workout: _data!.workout),
                             ),
                           ),
@@ -179,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: SectionHeader(
                             title: 'Activities',
                             onAction: () =>
-                                context.pushNamed(RouteNames.activityStatus),
+                                context.pushNamed(RouteNames.noActivities),
                           ),
                         ),
                         const SliverToBoxAdapter(child: SizedBox(height: 14)),
@@ -189,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ActivityBlobsCard(
                               blobs: _data!.activities,
                               onTap: () =>
-                                  context.pushNamed(RouteNames.heartRate),
+                                  context.pushNamed(RouteNames.activityStatus),
                             ),
                           ),
                         ),

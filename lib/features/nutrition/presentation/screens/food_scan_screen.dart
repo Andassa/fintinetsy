@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -78,7 +79,8 @@ class _FoodScanScreenState extends State<FoodScanScreen>
                     ),
                     CircularIconButton(
                       icon: Icons.more_horiz,
-                      onPressed: () {},
+                      onPressed: () =>
+                          context.pushNamed(RouteNames.calorieStats),
                     ),
                   ],
                 ),

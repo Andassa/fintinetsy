@@ -40,7 +40,7 @@ class _FitnessLevelAssessmentScreenState
             children: [
               AssessmentHeader(
                 step: 3,
-                totalSteps: 6,
+                totalSteps: 7,
                 onBack: () => context.goNamed(RouteNames.assessmentWeight),
               ),
               const SizedBox(height: 20),

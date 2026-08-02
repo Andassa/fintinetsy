@@ -31,7 +31,7 @@ class VocalAssessmentScreen extends StatelessWidget {
               children: [
                 AssessmentHeader(
                   step: 5,
-                  totalSteps: 6,
+                  totalSteps: 7,
                   onBack: () => context.goNamed(RouteNames.assessmentGender),
                 ),
                 const SizedBox(height: 28),

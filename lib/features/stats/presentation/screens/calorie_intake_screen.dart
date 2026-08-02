@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../domain/entities/stats_entities.dart';
@@ -59,7 +60,8 @@ class _CalorieIntakeScreenState extends State<CalorieIntakeScreen> {
                     ),
                     CircularIconButton(
                       icon: Icons.settings_outlined,
-                      onPressed: () {},
+                      onPressed: () =>
+                          context.pushNamed(RouteNames.accountSettings),
                     ),
                   ],
                 ),

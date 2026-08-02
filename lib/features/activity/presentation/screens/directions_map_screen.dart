@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../stats/domain/entities/stats_entities.dart';
 import '../../../stats/domain/repositories/stats_repository.dart';
@@ -171,7 +172,8 @@ class _DirectionsMapScreenState extends State<DirectionsMapScreen> {
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(18),
                         child: InkWell(
-                          onTap: () => context.pop(),
+                          onTap: () =>
+                              context.pushNamed(RouteNames.joggingCompleted),
                           borderRadius: BorderRadius.circular(18),
                           child: const SizedBox(
                             width: 72,

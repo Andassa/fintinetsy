@@ -71,7 +71,7 @@ class _WeightAssessmentScreenState extends State<WeightAssessmentScreen> {
               children: [
                 AssessmentHeader(
                   step: 2,
-                  totalSteps: 6,
+                  totalSteps: 7,
                   onBack: () => context.goNamed(RouteNames.assessmentAge),
                 ),
                 const SizedBox(height: 20),

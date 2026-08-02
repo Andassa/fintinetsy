@@ -55,7 +55,11 @@ class _AgeAssessmentScreenState extends State<AgeAssessmentScreen> {
         child: ResponsiveConstrained(
           child: Column(
             children: [
-              const AssessmentHeader(step: 1, totalSteps: 6),
+              AssessmentHeader(
+                step: 1,
+                totalSteps: 7,
+                onBack: () => context.goNamed(RouteNames.signIn),
+              ),
               const SizedBox(height: 24),
               Text(
                 "What's your Age?",

@@ -25,6 +25,9 @@ abstract final class AppAssets {
   /// Home / workouts
   static const String workoutStrength =
       'assets/98688d5876ee183f75c78e8d22e5feb9 1.png';
+  static const String workoutCompleteHero = 'assets/7xm 2.png';
+  static const String workoutBrowseHero = 'assets/7xm 3.png';
+  static const String workoutPreviewHero = 'assets/7xm 4.png';
   static const String aiCoachHero =
       'assets/8102dd149f6eaa1a7933df994f12a1f9 1.png';
 

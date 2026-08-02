@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../domain/entities/settings_entities.dart';
@@ -120,13 +121,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ...list.map((n) {
                     final bg = _parse(n.colorHex);
                     final isWhite = n.colorHex.toUpperCase() == '#FFFFFF';
-                    return Container(
+                    return Material(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(18),
+                        onTap: () {
+                          switch (n.iconKey) {
+                            case 'notifications':
+                              context.pushNamed(RouteNames.aiChatThread);
+                            case 'score':
+                              context.pushNamed(RouteNames.upliftScore);
+                            case 'water':
+                              context.pushNamed(RouteNames.hydration);
+                            case 'dumbbell':
+                              context.pushNamed(RouteNames.workoutComplete);
+                            case 'apple':
+                              context.pushNamed(RouteNames.addMeal);
+                            case 'data':
+                              context.pushNamed(RouteNames.calorieStats);
+                            default:
+                              context.pushNamed(RouteNames.aiCoachHub);
+                          }
+                        },
+                        child: Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(18),
-                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -245,6 +265,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               ),
                             ),
                         ],
+                      ),
+                        ),
                       ),
                     );
                   }),

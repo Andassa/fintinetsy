@@ -28,7 +28,7 @@ class GenderAssessmentScreen extends StatelessWidget {
               children: [
                 AssessmentHeader(
                   step: 4,
-                  totalSteps: 6,
+                  totalSteps: 7,
                   onBack: () =>
                       context.goNamed(RouteNames.assessmentFitnessLevel),
                 ),

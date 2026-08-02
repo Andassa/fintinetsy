@@ -5,6 +5,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/circular_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 
 class NoActivitiesScreen extends StatelessWidget {
@@ -23,8 +24,18 @@ class NoActivitiesScreen extends StatelessWidget {
         child: ResponsiveConstrained(
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
+                  child: CircularIconButton(
+                    icon: Icons.arrow_back,
+                    onPressed: () => context.pop(),
+                  ),
+                ),
+              ),
               SizedBox(
-                height: imageHeight,
+                height: imageHeight * 0.92,
                 width: double.infinity,
                 child: Image.asset(
                   AppAssets.basketballPlayer,
@@ -34,22 +45,18 @@ class NoActivitiesScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    28,
-                    8,
-                    28,
-                    bottom + 20,
-                  ),
+                  padding: EdgeInsets.fromLTRB(28, 8, 28, bottom + 20),
                   child: Column(
                     children: [
                       const Spacer(),
                       Text(
                         'No Activities',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 28,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 28,
+                                ),
                       ),
                       const SizedBox(height: 12),
                       Text(

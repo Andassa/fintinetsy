@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/search_entities.dart';
 import '../../domain/usecases/search_usecase.dart';
@@ -248,7 +249,10 @@ class _SearchScreenState extends State<SearchScreen> {
       case _SearchUiState.loading:
         return const Center(child: SearchLoadingIndicator());
       case _SearchUiState.notFound:
-        return const SearchNotFoundView();
+        return SearchNotFoundView(
+          onRetry: () => _submit(),
+          onCheckConnection: () => context.pushNamed(RouteNames.noInternet),
+        );
       case _SearchUiState.suggesting:
         return _SuggestionsPanel(
           suggestions: _suggestions,
@@ -260,7 +264,19 @@ class _SearchScreenState extends State<SearchScreen> {
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 24),
           itemCount: _results.length,
           separatorBuilder: (_, _) => const SizedBox(height: 12),
-          itemBuilder: (context, i) => SearchResultTile(item: _results[i]),
+          itemBuilder: (context, i) => SearchResultTile(
+            item: _results[i],
+            onTap: () {
+              switch (_filter) {
+                case SearchFilter.workout:
+                  context.pushNamed(RouteNames.workoutPreview);
+                case SearchFilter.meals:
+                  context.pushNamed(RouteNames.addMeal);
+                case SearchFilter.community:
+                  context.pushNamed(RouteNames.aiChatThread);
+              }
+            },
+          ),
         );
       case _SearchUiState.idle:
         return const SizedBox.shrink();

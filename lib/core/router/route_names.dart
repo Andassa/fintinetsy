@@ -37,6 +37,10 @@ abstract final class RouteNames {
   static const String aiCoachHub = 'ai-coach-hub';
   static const String aiChats = 'ai-chats';
   static const String aiChatThread = 'ai-chat-thread';
+  static const String workoutBrowse = 'workout-browse';
+  static const String workoutCategory = 'workout-category';
+  static const String workoutPreview = 'workout-preview';
+  static const String workoutComplete = 'workout-complete';
 }
 
 abstract final class AppRoutes {
@@ -78,4 +82,8 @@ abstract final class AppRoutes {
   static const String aiCoachHub = '/coach/hub';
   static const String aiChats = '/coach/chats';
   static const String aiChatThread = '/coach/chat';
+  static const String workoutBrowse = '/workouts/browse';
+  static const String workoutCategory = '/workouts/category';
+  static const String workoutPreview = '/workouts/preview';
+  static const String workoutComplete = '/workouts/complete';
 }

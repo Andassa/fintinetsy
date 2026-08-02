@@ -71,7 +71,14 @@ class _SearchLoadingIndicatorState extends State<SearchLoadingIndicator>
 }
 
 class SearchNotFoundView extends StatelessWidget {
-  const SearchNotFoundView({super.key});
+  const SearchNotFoundView({
+    super.key,
+    this.onRetry,
+    this.onCheckConnection,
+  });
+
+  final VoidCallback? onRetry;
+  final VoidCallback? onCheckConnection;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +110,14 @@ class SearchNotFoundView extends StatelessWidget {
                   color: AppColors.textSecondary,
                 ),
           ),
+          const SizedBox(height: 24),
+          if (onRetry != null)
+            TextButton(onPressed: onRetry, child: const Text('Try again')),
+          if (onCheckConnection != null)
+            TextButton(
+              onPressed: onCheckConnection,
+              child: const Text('Check connection'),
+            ),
         ],
       ),
     );

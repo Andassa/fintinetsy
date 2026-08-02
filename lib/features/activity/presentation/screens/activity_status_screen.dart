@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
+import '../../../../core/widgets/primary_button.dart';
 import '../../../stats/domain/entities/stats_entities.dart';
 import '../../../stats/domain/repositories/stats_repository.dart';
 import '../../../stats/presentation/widgets/donut_chart.dart';
@@ -101,23 +103,28 @@ class _ActivityStatusScreenState extends State<ActivityStatusScreen> {
                           alignment: Alignment(item.dx, item.dy),
                           child: Transform.rotate(
                             angle: item.rotationDeg * math.pi / 180,
-                            child: Container(
-                              width: item.width * (c.maxWidth / 390).clamp(0.85, 1.25),
-                              height:
-                                  item.height * (c.maxWidth / 390).clamp(0.85, 1.25),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: parseHex(item.colorHex),
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                              child: Text(
-                                item.hoursLabel,
-                                style: TextStyle(
-                                  color: isLight
-                                      ? AppColors.black
-                                      : AppColors.white,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 28,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  context.pushNamed(RouteNames.heartRate),
+                              child: Container(
+                                width: item.width *
+                                    (c.maxWidth / 390).clamp(0.85, 1.25),
+                                height: item.height *
+                                    (c.maxWidth / 390).clamp(0.85, 1.25),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: parseHex(item.colorHex),
+                                  borderRadius: BorderRadius.circular(28),
+                                ),
+                                child: Text(
+                                  item.hoursLabel,
+                                  style: TextStyle(
+                                    color: isLight
+                                        ? AppColors.black
+                                        : AppColors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 28,
+                                  ),
                                 ),
                               ),
                             ),
@@ -126,6 +133,14 @@ class _ActivityStatusScreenState extends State<ActivityStatusScreen> {
                       }).toList(),
                     );
                   },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                child: PrimaryButton(
+                  label: 'Start Activity',
+                  style: PrimaryButtonStyle.orange,
+                  onPressed: () => context.pushNamed(RouteNames.directions),
                 ),
               ),
             ],

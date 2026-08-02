@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -111,7 +112,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
                   label: 'Continue',
                   style: PrimaryButtonStyle.orange,
                   showIcon: false,
-                  onPressed: () => context.pop(),
+                  onPressed: () => context.pushNamed(RouteNames.directions),
                 ),
                 SizedBox(height: bottom + 12),
               ],
