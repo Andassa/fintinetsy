@@ -61,7 +61,7 @@ class WorkoutService:
                 code="strength",
                 title="Strength",
                 description=(
-                    "Build your muscles bigger and stronger with this exersice. "
+                    "Build bigger and stronger muscles with this exercise. "
                     "Train everyday to get bulk"
                 ),
                 header_image_url=f"{CDN_BASE_URL}/workouts/strength-header.png",

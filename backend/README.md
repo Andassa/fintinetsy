@@ -1,6 +1,6 @@
 # Uplift.ai API
 
-FastAPI backend for the Fintinetsy / Uplift.ai Flutter app.
+FastAPI backend for the Uplift.ai Flutter app.
 
 ## Quick start (local SQLite)
 
@@ -16,114 +16,114 @@ uvicorn app.main:app --reload --port 8000
 - Health: `GET http://localhost:8000/health`
 - Docs: `http://localhost:8000/docs`
 
-## Auth endpoints (`/api/v1/auth`)
+## Auth (`/api/v1/auth`)
 
-| Method | Path                     | Auth                  |
-| ------ | ------------------------ | --------------------- |
-| POST   | `/register`              | public                |
-| POST   | `/login`                 | public                |
-| POST   | `/refresh`               | public (refresh body) |
-| POST   | `/logout`                | Bearer                |
-| GET    | `/reset-methods`         | public                |
-| POST   | `/password-reset`        | public                |
-| POST   | `/password-reset/resend` | public                |
-| GET    | `/me`                    | Bearer                |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| POST | `/register` | public |
+| POST | `/login` | public |
+| POST | `/refresh` | public |
+| POST | `/logout` | Bearer |
+| GET | `/reset-methods` | public |
+| POST | `/password-reset` | public |
+| POST | `/password-reset/resend` | public |
+| GET | `/me` | Bearer |
 
 ## Assessment / Users
 
-| Method | Path                   | Auth   |
-| ------ | ---------------------- | ------ |
-| GET    | `/assessment/config`   | public |
-| GET    | `/users/me`            | Bearer |
-| GET    | `/users/me/assessment` | Bearer |
-| PUT    | `/users/me/assessment` | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/assessment/config` | public |
+| GET | `/users/me` | Bearer |
+| GET | `/users/me/assessment` | Bearer |
+| PUT | `/users/me/assessment` | Bearer |
 
 ## Home
 
-| Method | Path              | Auth   |
-| ------ | ----------------- | ------ |
-| GET    | `/home/dashboard` | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/home/dashboard` | Bearer |
 
 ## Workouts
 
-| Method | Path                              | Auth                        |
-| ------ | --------------------------------- | --------------------------- |
-| GET    | `/workouts/browse`                | public                      |
-| GET    | `/workouts/categories/{id}`       | public (`cursor`, `limit`)  |
-| GET    | `/workouts/{workout_id}`          | public                      |
-| POST   | `/workouts/{workout_id}/complete` | Bearer                      |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/workouts/browse` | public |
+| GET | `/workouts/categories/{id}` | public |
+| GET | `/workouts/{workout_id}` | public |
+| POST | `/workouts/{workout_id}/complete` | Bearer |
 
 ## Nutrition
 
-| Method | Path              | Auth   |
-| ------ | ----------------- | ------ |
-| GET    | `/meals/draft`    | Bearer |
-| POST   | `/meals`          | Bearer |
-| GET    | `/meals/{meal_id}`| Bearer |
-| POST   | `/meals/scan`     | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/meals/draft` | Bearer |
+| POST | `/meals` | Bearer |
+| GET | `/meals/{meal_id}` | Bearer |
+| POST | `/meals/scan` | Bearer |
 
 ## Stats
 
-| Method | Path                    | Auth   |
-| ------ | ----------------------- | ------ |
-| GET    | `/stats/hydration`      | Bearer |
-| POST   | `/stats/hydration`      | Bearer |
-| GET    | `/stats/heart-rate`     | Bearer |
-| GET    | `/stats/calories`       | Bearer |
-| GET    | `/stats/calories/intake`| Bearer |
-| GET    | `/stats/uplift-score`   | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/stats/hydration` | Bearer |
+| POST | `/stats/hydration` | Bearer |
+| GET | `/stats/heart-rate` | Bearer |
+| GET | `/stats/calories` | Bearer |
+| GET | `/stats/calories/intake` | Bearer |
+| GET | `/stats/uplift-score` | Bearer |
 
 ## Activities
 
-| Method | Path                           | Auth   |
-| ------ | ------------------------------ | ------ |
-| GET    | `/activities/status`           | Bearer |
-| GET    | `/activities/directions`       | Bearer |
-| POST   | `/activities`                  | Bearer |
-| POST   | `/activities/{id}/complete`    | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/activities/status` | Bearer |
+| GET | `/activities/directions` | Bearer |
+| POST | `/activities` | Bearer |
+| POST | `/activities/{id}/complete` | Bearer |
 
 ## Coach
 
-| Method | Path                              | Auth   |
-| ------ | --------------------------------- | ------ |
-| GET    | `/coach/hub`                      | Bearer |
-| GET    | `/coach/chats`                    | Bearer (`tab`, `cursor`) |
-| GET    | `/coach/chats/{id}/messages`      | Bearer |
-| POST   | `/coach/chats/{id}/messages`      | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/coach/hub` | Bearer |
+| GET | `/coach/chats` | Bearer |
+| GET | `/coach/chats/{id}/messages` | Bearer |
+| POST | `/coach/chats/{id}/messages` | Bearer |
 
 ## Settings / Notifications
 
-| Method | Path                              | Auth   |
-| ------ | --------------------------------- | ------ |
-| GET    | `/settings`                       | Bearer |
-| PATCH  | `/settings`                       | Bearer |
-| GET    | `/notifications`                  | Bearer (`scope`, `cursor`) |
-| PATCH  | `/notifications/{id}/read`        | Bearer |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/settings` | Bearer |
+| PATCH | `/settings` | Bearer |
+| GET | `/notifications` | Bearer |
+| PATCH | `/notifications/{id}/read` | Bearer |
 
 ## Search
 
-| Method | Path                  | Auth   |
-| ------ | --------------------- | ------ |
-| GET    | `/search`             | public (`q`, `filter`, `cursor`) |
-| GET    | `/search/suggestions` | public (`q`) |
+| Method | Path | Auth |
+| ------ | ---- | ---- |
+| GET | `/search` | public |
+| GET | `/search/suggestions` | public |
 
-## Cross-cutting
+## Notes
 
-- Auth rate limit: 5 req / 15 min / IP on login, register, refresh, password-reset (+ resend) → `429 rate_limited`
-- Auth failures always return the same message: `identifiants invalides` (no email/password enumeration)
-- Errors always use `{code, message, details}` (including FastAPI validation + unexpected 500)
-- ETag + `Cache-Control` on `GET /workouts/browse`, `/assessment/config`, `/search/suggestions` (304 on `If-None-Match`)
-- CORS: credentials disabled when origins is `*` (set an explicit allowlist in production)
+- Rate limit on login, register, refresh, password-reset: 5 req / 15 min / IP (`429`)
+- Failed auth always returns `identifiants invalides`
+- Error body: `{code, message, details}`
+- ETag on browse, assessment config, search suggestions
+- If `CORS_ORIGINS` is `*`, credentials are off
 
 ## Flutter remote API
 
-Default: FakeRepositories (offline UI demo).
+Fakes are used by default.
 
 ```bash
-# Terminal 1
+# API
 cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
 
-# Terminal 2 — iOS simulator / desktop
+# App (iOS / desktop)
 flutter run --dart-define=USE_REMOTE_API=true \
   --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
 
@@ -132,7 +132,7 @@ flutter run --dart-define=USE_REMOTE_API=true \
   --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
 
-Wired HTTP repos: auth, home, search. Tokens in secure storage; ETag cache in Hive; GoRouter redirects to sign-in when unauthenticated.
+HTTP repos wired: auth, home, search.
 
 ## Tests
 
@@ -149,8 +149,9 @@ cd backend
 docker compose up --build
 ```
 
-Uses Postgres + Redis. Set `DATABASE_URL=postgresql+asyncpg://uplift:uplift@db:5432/uplift`.
+Postgres + Redis. Example:
+`DATABASE_URL=postgresql+asyncpg://uplift:uplift@db:5432/uplift`
 
 ## Architecture
 
-`router → service → repository → model` (Clean Architecture).
+`router → service → repository → model`

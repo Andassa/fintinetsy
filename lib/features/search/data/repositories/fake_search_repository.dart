@@ -38,7 +38,7 @@ class FakeSearchRepository implements SearchRepository {
     ),
     SearchResultItem(
       id: 'r4',
-      title: 'AI Fitness Assisstant',
+      title: 'AI Fitness Assistant',
       matchPercent: 82,
       iconKey: 'fitness_center',
       iconColorHex: '#8CC622',

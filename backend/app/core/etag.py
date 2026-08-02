@@ -1,4 +1,4 @@
-"""ETag + Cache-Control middleware for stable GET endpoints."""
+"""HTTP ETag middleware for selected GET routes."""
 
 from __future__ import annotations
 

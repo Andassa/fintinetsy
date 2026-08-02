@@ -1,4 +1,4 @@
-/// Central registry of asset paths (no hardcoded paths in widgets).
+/// Asset paths used by the app.
 abstract final class AppAssets {
   static const String logo = 'assets/logo/Rectangle 1.svg';
   static const String welcomeBackground =

@@ -1,4 +1,4 @@
-"""In-memory / Redis-backed sliding-window rate limiter."""
+"""Sliding-window rate limiter (in-memory)."""
 
 from __future__ import annotations
 

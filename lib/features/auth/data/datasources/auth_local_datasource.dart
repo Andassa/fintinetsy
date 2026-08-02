@@ -1,7 +1,6 @@
 import '../models/reset_method_model.dart';
 import '../models/user_model.dart';
 
-/// Local mock data — realistic payloads a REST API would return.
 class AuthLocalDataSource {
   Future<UserModel> signIn({
     required String email,
@@ -26,7 +25,7 @@ class AuthLocalDataSource {
   }) async {
     await Future<void>.delayed(const Duration(milliseconds: 600));
     if (password != confirmPassword) {
-      throw Exception("ERROR: Password Don't Match!");
+      throw Exception('Passwords do not match');
     }
     if (email.isEmpty || password.isEmpty) {
       throw Exception('All fields are required');
@@ -45,7 +44,7 @@ class AuthLocalDataSource {
         id: 'reset_email',
         type: 'email',
         title: 'Send via Email',
-        description: 'Seamlessly reset your password via email address.',
+        description: 'Reset your password by email.',
         iconColorHex: '#FF7020',
         iconKey: 'email',
       ),
@@ -53,7 +52,7 @@ class AuthLocalDataSource {
         id: 'reset_2fa',
         type: 'twoFactor',
         title: 'Send via 2FA',
-        description: 'Seamlessly reset your password via 2 Factors.',
+        description: 'Reset your password with two-factor auth.',
         iconColorHex: '#1E60FF',
         iconKey: 'lock',
       ),
@@ -61,7 +60,7 @@ class AuthLocalDataSource {
         id: 'reset_gauth',
         type: 'googleAuth',
         title: 'Send via Google Auth',
-        description: 'Seamlessly reset your password via gAuth.',
+        description: 'Reset your password with Google Authenticator.',
         iconColorHex: '#8A2BE2',
         iconKey: 'gauth',
       ),

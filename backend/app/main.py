@@ -15,7 +15,7 @@ from app.core.exceptions import (
 )
 from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
-from app import models  # noqa: F401 — register models
+from app import models  # noqa: F401
 from app.services.assessment_service import AssessmentService
 from app.services.home_service import HomeService
 from app.services.search_service import SearchService

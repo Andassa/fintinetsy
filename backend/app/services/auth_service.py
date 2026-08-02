@@ -29,7 +29,7 @@ RESET_METHODS: list[ResetMethodOut] = [
         id="reset_email",
         type="email",
         title="Send via Email",
-        description="Seamlessly reset your password via email address.",
+        description="Reset your password by email.",
         icon_color_hex="#FF7020",
         icon_key="email",
     ),
@@ -37,7 +37,7 @@ RESET_METHODS: list[ResetMethodOut] = [
         id="reset_2fa",
         type="two_factor",
         title="Send via 2FA",
-        description="Seamlessly reset your password via 2 Factors.",
+        description="Reset your password with two-factor auth.",
         icon_color_hex="#1E60FF",
         icon_key="lock",
     ),
@@ -45,7 +45,7 @@ RESET_METHODS: list[ResetMethodOut] = [
         id="reset_gauth",
         type="google_auth",
         title="Send via Google Auth",
-        description="Seamlessly reset your password via gAuth.",
+        description="Reset your password with Google Authenticator.",
         icon_color_hex="#8A2BE2",
         icon_key="gauth",
     ),
@@ -116,7 +116,7 @@ class AuthService:
         self._validate_password_policy(password)
         existing = await self.users.get_by_email(session, email)
         if existing is not None:
-            raise ConflictException("Unable to create account")
+            raise ConflictException("Could not create account")
         name = email.split("@", maxsplit=1)[0]
         user = User(
             email=email.lower(),

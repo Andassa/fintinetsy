@@ -30,7 +30,7 @@ class FakeWorkoutRepository implements WorkoutRepository {
       title: 'Strength',
       totalLabel: '25 Total',
       description:
-          'Build your muscles bigger and stronger with this exersice. Train everyday to get bulk',
+          'Build bigger and stronger muscles with this exercise. Train every day to get bulk',
       headerAsset: AppAssets.aiHeaderCurves,
       items: [item, item, item, item],
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Semantic app colors — never hardcode hex in widgets; use Theme/ColorScheme or these tokens.
+/// App color tokens. Use these instead of raw hex in widgets.
 abstract final class AppColors {
   static const Color primary = Color(0xFFFF7101);
   static const Color primaryLight = Color(0xFFFF9D5C);

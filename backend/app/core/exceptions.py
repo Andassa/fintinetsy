@@ -107,6 +107,6 @@ async def unhandled_exception_handler(_: Request, exc: Exception) -> JSONRespons
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=error_body(
             "internal_error",
-            "Something went wrong. Please try again.",
+            "Please try again later.",
         ),
     )

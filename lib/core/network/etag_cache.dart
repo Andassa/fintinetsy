@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-/// Offline cache keyed by path, stores body + ETag for revalidation.
 class EtagCache {
   EtagCache(this._box);
 

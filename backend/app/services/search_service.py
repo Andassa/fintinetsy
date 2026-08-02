@@ -88,7 +88,7 @@ class SearchService:
                 "progress": 0.6,
             },
             {
-                "title": "AI Fitness Assisstant",
+                "title": "AI Fitness Assistant",
                 "filter": SearchFilterKind.workout,
                 "match_percent": 82,
                 "icon_key": "fitness_center",

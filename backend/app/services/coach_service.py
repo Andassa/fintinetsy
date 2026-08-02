@@ -230,7 +230,7 @@ class CoachService:
             CoachMessage(
                 conversation_id=chat.id,
                 kind=MessageKind.bot,
-                text="Got it! I'll help you with that.",
+                text="Ok, I can help with that.",
                 sent_at=now,
             ),
         )
