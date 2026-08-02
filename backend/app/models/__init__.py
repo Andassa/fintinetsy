@@ -6,6 +6,7 @@ from app.models.home import (
     HomeFeaturedMeal,
     HomeFeaturedWorkout,
 )
+from app.models.nutrition import Meal
 from app.models.user import PasswordResetRequest, RefreshToken, User
 from app.models.workout import (
     Workout,
@@ -30,4 +31,5 @@ __all__ = [
     "Workout",
     "WorkoutBrowseSeed",
     "WorkoutSession",
+    "Meal",
 ]

@@ -53,6 +53,15 @@ uvicorn app.main:app --reload --port 8000
 | GET    | `/workouts/{workout_id}`          | public                      |
 | POST   | `/workouts/{workout_id}/complete` | Bearer                      |
 
+## Nutrition
+
+| Method | Path              | Auth   |
+| ------ | ----------------- | ------ |
+| GET    | `/meals/draft`    | Bearer |
+| POST   | `/meals`          | Bearer |
+| GET    | `/meals/{meal_id}`| Bearer |
+| POST   | `/meals/scan`     | Bearer |
+
 ## Tests
 
 ```bash
