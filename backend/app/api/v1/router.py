@@ -6,7 +6,9 @@ from app.api.v1.routers import (
     auth,
     coach,
     home,
+    notifications,
     nutrition,
+    settings,
     stats,
     workouts,
 )
@@ -20,3 +22,5 @@ api_router.include_router(nutrition.router)
 api_router.include_router(stats.router)
 api_router.include_router(activities.router)
 api_router.include_router(coach.router)
+api_router.include_router(settings.router)
+api_router.include_router(notifications.router)

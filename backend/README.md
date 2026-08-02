@@ -91,6 +91,15 @@ uvicorn app.main:app --reload --port 8000
 | GET    | `/coach/chats/{id}/messages`      | Bearer |
 | POST   | `/coach/chats/{id}/messages`      | Bearer |
 
+## Settings / Notifications
+
+| Method | Path                              | Auth   |
+| ------ | --------------------------------- | ------ |
+| GET    | `/settings`                       | Bearer |
+| PATCH  | `/settings`                       | Bearer |
+| GET    | `/notifications`                  | Bearer (`scope`, `cursor`) |
+| PATCH  | `/notifications/{id}/read`        | Bearer |
+
 ## Tests
 
 ```bash
