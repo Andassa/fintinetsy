@@ -6,7 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.core.etag import ETagMiddleware
-from app.core.exceptions import AppException, app_exception_handler
+from app.core.exceptions import (
+    AppException,
+    app_exception_handler,
+    http_exception_handler,
+    unhandled_exception_handler,
+    validation_exception_handler,
+)
 from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
 from app import models  # noqa: F401 — register models
@@ -14,6 +20,8 @@ from app.services.assessment_service import AssessmentService
 from app.services.home_service import HomeService
 from app.services.search_service import SearchService
 from app.services.workout_service import WorkoutService
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 @asynccontextmanager
@@ -38,12 +46,16 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.add_exception_handler(AppException, app_exception_handler)
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+    app.add_exception_handler(Exception, unhandled_exception_handler)
     if settings.etag_enabled:
         app.add_middleware(ETagMiddleware)
+    allow_credentials = "*" not in settings.cors_origins
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_credentials=True,
+        allow_credentials=allow_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )

@@ -1,8 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, status
 
 from app.core.dependencies import CurrentUser, DbSession
+from app.core.pagination import CursorQuery, LimitQuery
 from app.schemas.workout import (
     WorkoutBrowseOut,
     WorkoutCategoryOut,
@@ -25,8 +26,8 @@ async def get_browse(session: DbSession) -> WorkoutBrowseOut:
 async def get_category(
     category_id: str,
     session: DbSession,
-    cursor: str | None = None,
-    limit: int = Query(default=20, ge=1, le=100),
+    cursor: CursorQuery = None,
+    limit: LimitQuery = 20,
 ) -> WorkoutCategoryOut:
     return await _service.get_category(session, category_id, cursor, limit)
 

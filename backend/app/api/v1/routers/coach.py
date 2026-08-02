@@ -1,9 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Query, status
+from fastapi import APIRouter, status
 
 from app.core.dependencies import CurrentUser, DbSession
-from app.core.pagination import CursorPage
+from app.core.pagination import CursorPage, CursorQuery, LimitQuery, MessageLimitQuery
 from app.schemas.coach import (
     AiChatListItemOut,
     AiChatThreadOut,
@@ -28,8 +28,8 @@ async def list_chats(
     session: DbSession,
     user: CurrentUser,
     tab: ConversationTabOut = ConversationTabOut.ai,
-    cursor: str | None = None,
-    limit: int = Query(default=20, ge=1, le=100),
+    cursor: CursorQuery = None,
+    limit: LimitQuery = 20,
 ) -> CursorPage[AiChatListItemOut]:
     return await _service.list_chats(session, user.id, tab, cursor, limit)
 
@@ -39,8 +39,8 @@ async def get_chat_messages(
     chat_id: UUID,
     session: DbSession,
     user: CurrentUser,
-    cursor: str | None = None,
-    limit: int = Query(default=50, ge=1, le=100),
+    cursor: CursorQuery = None,
+    limit: MessageLimitQuery = 50,
 ) -> AiChatThreadOut:
     return await _service.get_messages(session, user.id, chat_id, cursor, limit)
 

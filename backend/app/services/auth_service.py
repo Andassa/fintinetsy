@@ -59,6 +59,8 @@ _METHOD_ALIASES = {
     "googleAuth": "google_auth",
 }
 
+_AUTH_FAIL = "identifiants invalides"
+
 
 class AuthService:
     def __init__(self) -> None:
@@ -110,11 +112,11 @@ class AuthService:
         confirm_password: str,
     ) -> AuthResponse:
         if password != confirm_password:
-            raise ValidationAppException("ERROR: Password Don't Match!")
+            raise ValidationAppException("Passwords do not match")
         self._validate_password_policy(password)
         existing = await self.users.get_by_email(session, email)
         if existing is not None:
-            raise ConflictException("Email already registered")
+            raise ConflictException("Unable to create account")
         name = email.split("@", maxsplit=1)[0]
         user = User(
             email=email.lower(),
@@ -133,23 +135,23 @@ class AuthService:
     ) -> AuthResponse:
         user = await self.users.get_by_email(session, email)
         if user is None or not verify_password(password, user.hashed_password):
-            raise UnauthorizedException("Invalid email or password")
+            raise UnauthorizedException(_AUTH_FAIL)
         return await self._issue_tokens(session, user)
 
     async def refresh(self, session: AsyncSession, raw_refresh: str) -> AuthResponse:
         token_hash = hash_refresh_token(raw_refresh)
         token = await self.refresh_tokens.get_active_by_hash(session, token_hash)
         if token is None:
-            raise UnauthorizedException("Invalid refresh token")
+            raise UnauthorizedException(_AUTH_FAIL)
         expires = token.expires_at
         if expires.tzinfo is None:
             expires = expires.replace(tzinfo=UTC)
         if expires < datetime.now(UTC):
-            raise UnauthorizedException("Refresh token expired")
+            raise UnauthorizedException(_AUTH_FAIL)
         await self.refresh_tokens.revoke(session, token)
         user = await self.users.get_by_id(session, token.user_id)
         if user is None:
-            raise UnauthorizedException("User not found")
+            raise UnauthorizedException(_AUTH_FAIL)
         return await self._issue_tokens(session, user)
 
     async def logout(self, session: AsyncSession, user_id: UUID) -> None:

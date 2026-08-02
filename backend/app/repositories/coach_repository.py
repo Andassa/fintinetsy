@@ -109,12 +109,20 @@ class CoachMessageRepository(GenericRepository[CoachMessage]):
         self,
         session: AsyncSession,
         conversation_id: UUID,
+        user_id: UUID,
         cursor: str | None,
         limit: int,
     ) -> CursorPage[ChatMessageOut]:
         stmt = (
             select(CoachMessage)
-            .where(CoachMessage.conversation_id == conversation_id)
+            .join(
+                CoachConversation,
+                CoachMessage.conversation_id == CoachConversation.id,
+            )
+            .where(
+                CoachMessage.conversation_id == conversation_id,
+                CoachConversation.user_id == user_id,
+            )
             .order_by(CoachMessage.sent_at.asc(), CoachMessage.id.asc())
         )
         payload = decode_cursor(cursor)

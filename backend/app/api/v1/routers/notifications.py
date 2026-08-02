@@ -1,8 +1,9 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
 from app.core.dependencies import CurrentUser, DbSession
+from app.core.pagination import CursorQuery, LimitQuery
 from app.schemas.settings import (
     NotificationOut,
     NotificationPageOut,
@@ -19,8 +20,8 @@ async def list_notifications(
     session: DbSession,
     user: CurrentUser,
     scope: NotificationScopeOut = NotificationScopeOut.today,
-    cursor: str | None = None,
-    limit: int = Query(default=20, ge=1, le=100),
+    cursor: CursorQuery = None,
+    limit: LimitQuery = 20,
 ) -> NotificationPageOut:
     return await _service.list_notifications(session, user.id, scope, cursor, limit)
 

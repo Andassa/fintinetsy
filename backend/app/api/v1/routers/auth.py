@@ -36,7 +36,11 @@ async def register(
     )
 
 
-@router.post("/login", response_model=AuthResponse, dependencies=[Depends(rate_limit_auth)])
+@router.post(
+    "/login",
+    response_model=AuthResponse,
+    dependencies=[Depends(rate_limit_auth)],
+)
 async def login(
     body: LoginRequest,
     session: DbSession,
@@ -45,7 +49,11 @@ async def login(
     return await auth.login(session, email=str(body.email), password=body.password)
 
 
-@router.post("/refresh", response_model=AuthResponse)
+@router.post(
+    "/refresh",
+    response_model=AuthResponse,
+    dependencies=[Depends(rate_limit_auth)],
+)
 async def refresh(
     body: RefreshRequest,
     session: DbSession,
@@ -69,7 +77,11 @@ async def reset_methods(auth: AuthSvc) -> list[ResetMethodOut]:
     return auth.list_reset_methods()
 
 
-@router.post("/password-reset", response_model=PasswordResetResponse)
+@router.post(
+    "/password-reset",
+    response_model=PasswordResetResponse,
+    dependencies=[Depends(rate_limit_auth)],
+)
 async def password_reset(
     body: PasswordResetRequestBody,
     session: DbSession,
@@ -78,7 +90,11 @@ async def password_reset(
     return await auth.request_password_reset(session, str(body.email), body.method)
 
 
-@router.post("/password-reset/resend", response_model=PasswordResetResponse)
+@router.post(
+    "/password-reset/resend",
+    response_model=PasswordResetResponse,
+    dependencies=[Depends(rate_limit_auth)],
+)
 async def password_reset_resend(
     body: PasswordResetResendBody,
     session: DbSession,

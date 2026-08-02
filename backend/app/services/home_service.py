@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.constants import CDN_BASE_URL
 from app.core.exceptions import NotFoundException
 from app.models.home import (
     HomeActivityBlobLayout,
@@ -28,8 +29,6 @@ from app.schemas.home import (
     HomeUserGreetingOut,
     HomeWorkoutCardOut,
 )
-
-CDN = "https://cdn.uplift.ai"
 
 
 class HomeService:
@@ -79,7 +78,7 @@ class HomeService:
                 subtitle="8 Series Workout",
                 duration_minutes=25,
                 calories=412,
-                image_url=f"{CDN}/workouts/upper-strength-2.png",
+                image_url=f"{CDN_BASE_URL}/workouts/upper-strength-2.png",
                 is_active=True,
             ),
         )
@@ -94,7 +93,7 @@ class HomeService:
                 duration_minutes=20,
                 protein_g=25,
                 fats_g=16,
-                image_url=f"{CDN}/meals/salad-egg.jpg",
+                image_url=f"{CDN_BASE_URL}/meals/salad-egg.jpg",
                 is_active=True,
             ),
         )
@@ -128,7 +127,7 @@ class HomeService:
             HomeAiCoachCardSeed(
                 conversations_count=1879,
                 subtitle="AI Conversation",
-                image_url=f"{CDN}/coach/hero.png",
+                image_url=f"{CDN_BASE_URL}/coach/hero.png",
                 is_active=True,
             ),
         )
@@ -143,54 +142,72 @@ class HomeService:
         categories = await self.categories.list_ordered(session)
         blobs = await self.blobs.list_ordered(session)
         return HomeDashboardOut(
-            user=HomeUserGreetingOut(
-                name=user.name,
-                date=datetime.now(UTC),
-                kcal=251,
-                hunger_status="Hungry",
-                notification_count=0,
-                avatar_url=user.avatar_url,
-            ),
-            categories=[
-                HomeCategoryOut(
-                    id=c.code,
-                    label=c.label,
-                    icon_key=c.icon_key,
-                    is_selected=c.is_default_selected,
-                )
-                for c in categories
-            ],
-            workout=HomeWorkoutCardOut(
-                id=workout.code,
-                title=workout.title,
-                subtitle=workout.subtitle,
-                duration_minutes=workout.duration_minutes,
-                calories=workout.calories,
-                image_url=workout.image_url,
-            ),
-            diet=HomeDietCardOut(
-                id=meal.code,
-                title=meal.title,
-                calories=meal.calories,
-                duration_minutes=meal.duration_minutes,
-                protein_g=meal.protein_g,
-                fats_g=meal.fats_g,
-                image_url=meal.image_url,
-            ),
-            activities=[
-                HomeActivityBlobOut(
-                    hours_label=b.hours_label,
-                    color_hex=b.color_hex,
-                    rotation_deg=b.rotation_deg,
-                    width_factor=b.width_factor,
-                    height_factor=b.height_factor,
-                    alignment=AlignmentOut(x=b.align_x, y=b.align_y),
-                )
-                for b in blobs
-            ],
-            ai_coach=HomeAiCoachCardOut(
-                conversations_count=coach.conversations_count,
-                subtitle=coach.subtitle,
-                image_url=coach.image_url,
-            ),
+            user=self._map_user(user),
+            categories=self._map_categories(categories),
+            workout=self._map_workout(workout),
+            diet=self._map_diet(meal),
+            activities=self._map_activities(blobs),
+            ai_coach=self._map_coach(coach),
+        )
+
+    def _map_user(self, user: User) -> HomeUserGreetingOut:
+        return HomeUserGreetingOut(
+            name=user.name,
+            date=datetime.now(UTC),
+            kcal=251,
+            hunger_status="Hungry",
+            notification_count=0,
+            avatar_url=user.avatar_url,
+        )
+
+    def _map_categories(self, categories: list) -> list[HomeCategoryOut]:
+        return [
+            HomeCategoryOut(
+                id=c.code,
+                label=c.label,
+                icon_key=c.icon_key,
+                is_selected=c.is_default_selected,
+            )
+            for c in categories
+        ]
+
+    def _map_workout(self, workout: HomeFeaturedWorkout) -> HomeWorkoutCardOut:
+        return HomeWorkoutCardOut(
+            id=workout.code,
+            title=workout.title,
+            subtitle=workout.subtitle,
+            duration_minutes=workout.duration_minutes,
+            calories=workout.calories,
+            image_url=workout.image_url,
+        )
+
+    def _map_diet(self, meal: HomeFeaturedMeal) -> HomeDietCardOut:
+        return HomeDietCardOut(
+            id=meal.code,
+            title=meal.title,
+            calories=meal.calories,
+            duration_minutes=meal.duration_minutes,
+            protein_g=meal.protein_g,
+            fats_g=meal.fats_g,
+            image_url=meal.image_url,
+        )
+
+    def _map_activities(self, blobs: list) -> list[HomeActivityBlobOut]:
+        return [
+            HomeActivityBlobOut(
+                hours_label=b.hours_label,
+                color_hex=b.color_hex,
+                rotation_deg=b.rotation_deg,
+                width_factor=b.width_factor,
+                height_factor=b.height_factor,
+                alignment=AlignmentOut(x=b.align_x, y=b.align_y),
+            )
+            for b in blobs
+        ]
+
+    def _map_coach(self, coach: HomeAiCoachCardSeed) -> HomeAiCoachCardOut:
+        return HomeAiCoachCardOut(
+            conversations_count=coach.conversations_count,
+            subtitle=coach.subtitle,
+            image_url=coach.image_url,
         )

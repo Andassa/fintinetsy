@@ -16,7 +16,7 @@ from app.schemas.nutrition import (
     MealTypeOut,
 )
 
-CDN = "https://cdn.uplift.ai"
+from app.core.constants import CDN_BASE_URL
 
 
 class NutritionService:
@@ -67,7 +67,7 @@ class NutritionService:
         return self._to_out(meal)
 
     def start_scan(self, body: MealScanRequest) -> MealScanOut:
-        image = body.image_url or f"{CDN}/meals/power-bowl.jpg"
+        image = body.image_url or f"{CDN_BASE_URL}/meals/power-bowl.jpg"
         return MealScanOut(
             image_url=image,
             status_label="Scanning...",

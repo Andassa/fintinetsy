@@ -18,7 +18,7 @@ from app.schemas.activity import (
     DonutSegmentOut,
 )
 
-CDN = "https://cdn.uplift.ai"
+from app.core.constants import CDN_BASE_URL
 
 
 class ActivityService:
@@ -97,7 +97,7 @@ class ActivityService:
             instruction="Turn right",
             distance_left="10 Mtr Left",
             arrival_label="Arrival ( 2 mins )",
-            thumbnail_url=f"{CDN}/workouts/strength-header.png",
+            thumbnail_url=f"{CDN_BASE_URL}/workouts/strength-header.png",
         )
 
     async def create_activity(

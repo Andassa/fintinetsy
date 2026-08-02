@@ -109,8 +109,11 @@ uvicorn app.main:app --reload --port 8000
 
 ## Cross-cutting
 
-- Auth rate limit: 5 req / 15 min / IP on `POST /auth/login` and `POST /auth/register` (429 `rate_limited`)
+- Auth rate limit: 5 req / 15 min / IP on login, register, refresh, password-reset (+ resend) → `429 rate_limited`
+- Auth failures always return the same message: `identifiants invalides` (no email/password enumeration)
+- Errors always use `{code, message, details}` (including FastAPI validation + unexpected 500)
 - ETag + `Cache-Control` on `GET /workouts/browse`, `/assessment/config`, `/search/suggestions` (304 on `If-None-Match`)
+- CORS: credentials disabled when origins is `*` (set an explicit allowlist in production)
 
 ## Flutter remote API
 

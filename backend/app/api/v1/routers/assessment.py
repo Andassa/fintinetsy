@@ -20,13 +20,7 @@ async def get_assessment_config(session: DbSession) -> AssessmentConfigOut:
 
 @router.get("/users/me", response_model=UserMeOut)
 async def get_me(user: CurrentUser) -> UserMeOut:
-    return UserMeOut(
-        id=str(user.id),
-        email=user.email,
-        name=user.name,
-        avatar_url=user.avatar_url,
-        membership=user.membership.value,
-    )
+    return _service.to_user_me(user)
 
 
 @router.get("/users/me/assessment", response_model=AssessmentProfileOut)

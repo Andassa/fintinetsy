@@ -23,7 +23,7 @@ from app.schemas.stats import (
     UpliftScoreOut,
 )
 
-CDN = "https://cdn.uplift.ai"
+from app.core.constants import CDN_BASE_URL
 DEFAULT_HYDRATION_GOAL = 2000
 DEFAULT_CALORIE_GOAL = 1903
 
@@ -111,7 +111,7 @@ class StatsService:
             pressure_unit="mmHg",
             oxygen=latest.oxygen or 112,
             oxygen_unit="SpO2",
-            hero_image_url=f"{CDN}/stats/basketball-player.png",
+            hero_image_url=f"{CDN_BASE_URL}/stats/basketball-player.png",
         )
 
     def _default_heart_rate(self) -> HeartRateOut:
@@ -122,7 +122,7 @@ class StatsService:
             pressure_unit="mmHg",
             oxygen=112,
             oxygen_unit="SpO2",
-            hero_image_url=f"{CDN}/stats/basketball-player.png",
+            hero_image_url=f"{CDN_BASE_URL}/stats/basketball-player.png",
         )
 
     async def get_calorie_stats(

@@ -1,10 +1,7 @@
 from datetime import datetime
-from typing import Generic, TypeVar
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-
-T = TypeVar("T")
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 
 class ORMModel(BaseModel):
@@ -24,8 +21,11 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8)
     confirm_password: str
 
-    def passwords_match(self) -> bool:
-        return self.password == self.confirm_password
+    @model_validator(mode="after")
+    def passwords_must_match(self) -> "RegisterRequest":
+        if self.password != self.confirm_password:
+            raise ValueError("Passwords do not match")
+        return self
 
 
 class LoginRequest(BaseModel):
@@ -70,9 +70,3 @@ class ResetMethodOut(BaseModel):
 
 class MessageOut(BaseModel):
     message: str
-
-
-class CursorPage(BaseModel, Generic[T]):
-    items: list[T]
-    next_cursor: str | None = None
-    has_more: bool = False

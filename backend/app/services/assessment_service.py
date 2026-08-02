@@ -10,6 +10,7 @@ from app.models.assessment import (
     GenderOption,
     WeightUnit,
 )
+from app.models.user import User
 from app.repositories.assessment_repository import (
     AssessmentConfigRepository,
     AssessmentProfileRepository,
@@ -20,6 +21,7 @@ from app.schemas.assessment import (
     AssessmentProfileOut,
     AssessmentProfileUpdate,
     FitnessGoalOut,
+    UserMeOut,
     VocalAssessmentOut,
 )
 
@@ -145,9 +147,17 @@ class AssessmentService:
             profile = AssessmentProfile(user_id=user_id)
             await self.profiles.add(session, profile)
         await self._apply_update(session, profile, data)
-        await session.flush()
-        await session.refresh(profile)
-        return self._to_out(profile)
+        saved = await self.profiles.upsert_for_user(session, profile)
+        return self._to_out(saved)
+
+    def to_user_me(self, user: User) -> UserMeOut:
+        return UserMeOut(
+            id=str(user.id),
+            email=user.email,
+            name=user.name,
+            avatar_url=user.avatar_url,
+            membership=user.membership.value,
+        )
 
     async def _apply_update(
         self,

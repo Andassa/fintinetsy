@@ -1,7 +1,9 @@
 from typing import Any
 
 from fastapi import Request, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 
 class AppException(Exception):
@@ -20,7 +22,7 @@ class AppException(Exception):
 
 
 class UnauthorizedException(AppException):
-    def __init__(self, message: str = "Unauthorized") -> None:
+    def __init__(self, message: str = "identifiants invalides") -> None:
         super().__init__(
             code="unauthorized",
             message=message,
@@ -56,8 +58,55 @@ class ValidationAppException(AppException):
         )
 
 
+def error_body(code: str, message: str, details: Any = None) -> dict[str, Any]:
+    return {"code": code, "message": message, "details": details}
+
+
 async def app_exception_handler(_: Request, exc: AppException) -> JSONResponse:
-    body: dict[str, Any] = {"code": exc.code, "message": exc.message}
-    if exc.details is not None:
-        body["details"] = exc.details
-    return JSONResponse(status_code=exc.status_code, content=body)
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=error_body(exc.code, exc.message, exc.details),
+    )
+
+
+async def validation_exception_handler(
+    _: Request,
+    exc: RequestValidationError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=error_body(
+            "validation_error",
+            "Invalid request data",
+            details=exc.errors(),
+        ),
+    )
+
+
+async def http_exception_handler(
+    _: Request,
+    exc: StarletteHTTPException,
+) -> JSONResponse:
+    message = exc.detail if isinstance(exc.detail, str) else "Request failed"
+    code = "http_error"
+    if exc.status_code == status.HTTP_401_UNAUTHORIZED:
+        code = "unauthorized"
+        message = "identifiants invalides"
+    elif exc.status_code == status.HTTP_404_NOT_FOUND:
+        code = "not_found"
+    elif exc.status_code == status.HTTP_403_FORBIDDEN:
+        code = "forbidden"
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=error_body(code, message),
+    )
+
+
+async def unhandled_exception_handler(_: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=error_body(
+            "internal_error",
+            "Something went wrong. Please try again.",
+        ),
+    )

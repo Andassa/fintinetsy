@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class ORMModel(BaseModel):
@@ -53,7 +53,7 @@ class AssessmentProfileUpdate(BaseModel):
 
 class UserMeOut(ORMModel):
     id: str
-    email: str
+    email: EmailStr
     name: str
     avatar_url: str | None
     membership: str

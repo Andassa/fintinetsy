@@ -1,8 +1,9 @@
 import base64
 import json
-from typing import Generic, TypeVar
+from typing import Annotated, Generic, TypeVar
 
-from pydantic import BaseModel, Field
+from fastapi import Query
+from pydantic import BaseModel
 
 T = TypeVar("T")
 
@@ -29,5 +30,6 @@ def decode_cursor(cursor: str | None) -> dict | None:
         return None
 
 
-def pagination_params(limit: int = Field(default=20, ge=1, le=100)) -> int:
-    return limit
+CursorQuery = Annotated[str | None, Query()]
+LimitQuery = Annotated[int, Query(ge=1, le=100)]
+MessageLimitQuery = Annotated[int, Query(ge=1, le=100)]

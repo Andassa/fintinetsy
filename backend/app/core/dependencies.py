@@ -1,4 +1,3 @@
-from collections.abc import AsyncGenerator
 from typing import Annotated
 from uuid import UUID
 
@@ -35,15 +34,15 @@ async def get_current_user(
     token: Annotated[str | None, Depends(oauth2_scheme)],
 ) -> User:
     if not token:
-        raise UnauthorizedException("Missing access token")
+        raise UnauthorizedException("identifiants invalides")
     try:
         payload = decode_access_token(token)
         user_id = UUID(payload["sub"])
     except (jwt.PyJWTError, KeyError, ValueError) as exc:
-        raise UnauthorizedException("Invalid or expired access token") from exc
+        raise UnauthorizedException("identifiants invalides") from exc
     user = await UserRepository().get_by_id(session, user_id)
     if user is None:
-        raise UnauthorizedException("User not found")
+        raise UnauthorizedException("identifiants invalides")
     return user
 
 

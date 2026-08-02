@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 
 from app.core.dependencies import DbSession
+from app.core.pagination import CursorQuery, LimitQuery
 from app.schemas.search import SearchFilterOut, SearchPageOut, SearchSuggestionOut
 from app.services.search_service import SearchService
 
@@ -13,8 +14,8 @@ async def search(
     session: DbSession,
     q: str = "",
     filter: SearchFilterOut | None = None,
-    cursor: str | None = None,
-    limit: int = Query(default=20, ge=1, le=100),
+    cursor: CursorQuery = None,
+    limit: LimitQuery = 20,
 ) -> SearchPageOut:
     return await _service.search(session, q, filter, cursor, limit)
 

@@ -24,7 +24,7 @@ from app.schemas.workout import (
     WorkoutDetailOut,
 )
 
-CDN = "https://cdn.uplift.ai"
+from app.core.constants import CDN_BASE_URL
 
 
 class WorkoutService:
@@ -44,7 +44,7 @@ class WorkoutService:
                         "Workout categories will help you gain strength, "
                         "get in better shape and embrace a healthy lifestyle"
                     ),
-                    hero_image_url=f"{CDN}/workouts/browse-hero.png",
+                    hero_image_url=f"{CDN_BASE_URL}/workouts/browse-hero.png",
                     active_dot_index=1,
                     dot_count=3,
                     is_active=True,
@@ -64,7 +64,7 @@ class WorkoutService:
                     "Build your muscles bigger and stronger with this exersice. "
                     "Train everyday to get bulk"
                 ),
-                header_image_url=f"{CDN}/workouts/strength-header.png",
+                header_image_url=f"{CDN_BASE_URL}/workouts/strength-header.png",
                 sort_order=0,
             ),
         )
@@ -81,8 +81,8 @@ class WorkoutService:
                     sets=3,
                     reps=30,
                     total_exercises=10,
-                    hero_image_url=f"{CDN}/workouts/back-hero.png",
-                    thumbnail_url=f"{CDN}/workouts/back-thumb.png",
+                    hero_image_url=f"{CDN_BASE_URL}/workouts/back-hero.png",
+                    thumbnail_url=f"{CDN_BASE_URL}/workouts/back-thumb.png",
                     sort_order=i,
                 ),
             )

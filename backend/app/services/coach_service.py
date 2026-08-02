@@ -189,7 +189,13 @@ class CoachService:
         chat = await self.conversations.get_for_user(session, chat_id, user_id)
         if chat is None:
             raise NotFoundException("Chat not found")
-        page = await self.messages.list_by_chat_cursor(session, chat_id, cursor, limit)
+        page = await self.messages.list_by_chat_cursor(
+            session,
+            chat_id,
+            user_id,
+            cursor,
+            limit,
+        )
         return AiChatThreadOut(
             chat_id=chat.id,
             bot_name="Uplift",
