@@ -7,6 +7,7 @@ import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
+import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../domain/entities/settings_entities.dart';
 import '../../domain/repositories/settings_repository.dart';
 
@@ -163,6 +164,23 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     }),
                     const SizedBox(height: 16),
                   ],
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        await context.read<AuthRepository>().signOut();
+                        if (!context.mounted) return;
+                        context.goNamed(RouteNames.signIn);
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Log out'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

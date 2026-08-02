@@ -1,11 +1,14 @@
-/// Remote API flags.
-/// Example:
-/// flutter run --dart-define=USE_REMOTE_API=true
+/// API configuration.
+///
+/// Remote API is ON by default. To force local fakes:
+/// flutter run --dart-define=USE_FAKE_DATA=true
 abstract final class ApiConfig {
-  static const bool useRemoteApi = bool.fromEnvironment(
-    'USE_REMOTE_API',
+  static const bool useFakeData = bool.fromEnvironment(
+    'USE_FAKE_DATA',
     defaultValue: false,
   );
+
+  static bool get useRemoteApi => !useFakeData;
 
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',

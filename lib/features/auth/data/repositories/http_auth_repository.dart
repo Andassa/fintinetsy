@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/auth/auth_session.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../../core/network/api_exception.dart';
 import '../../../../core/network/token_storage.dart';
 import '../../domain/entities/auth_credentials.dart';
 import '../../domain/entities/password_sent_result.dart';
@@ -24,14 +25,18 @@ class HttpAuthRepository implements AuthRepository {
 
   @override
   Future<UserEntity> signIn(AuthCredentials credentials) async {
-    final response = await _api.raw.post<Map<String, dynamic>>(
-      '/auth/login',
-      data: {
-        'email': credentials.email,
-        'password': credentials.password,
-      },
-    );
-    return _persistAuth(response.data!);
+    try {
+      final response = await _api.raw.post<Map<String, dynamic>>(
+        '/auth/login',
+        data: {
+          'email': credentials.email,
+          'password': credentials.password,
+        },
+      );
+      return _persistAuth(response.data!);
+    } on DioException catch (e) {
+      throw _map(e);
+    }
   }
 
   @override
@@ -40,15 +45,19 @@ class HttpAuthRepository implements AuthRepository {
     required String password,
     required String confirmPassword,
   }) async {
-    final response = await _api.raw.post<Map<String, dynamic>>(
-      '/auth/register',
-      data: {
-        'email': email,
-        'password': password,
-        'confirm_password': confirmPassword,
-      },
-    );
-    return _persistAuth(response.data!);
+    try {
+      final response = await _api.raw.post<Map<String, dynamic>>(
+        '/auth/register',
+        data: {
+          'email': email,
+          'password': password,
+          'confirm_password': confirmPassword,
+        },
+      );
+      return _persistAuth(response.data!);
+    } on DioException catch (e) {
+      throw _map(e);
+    }
   }
 
   Future<UserEntity> _persistAuth(Map<String, dynamic> data) async {
@@ -68,18 +77,22 @@ class HttpAuthRepository implements AuthRepository {
 
   @override
   Future<List<ResetMethodEntity>> getResetMethods() async {
-    final response = await _api.raw.get<List<dynamic>>('/auth/reset-methods');
-    return (response.data ?? []).map((raw) {
-      final m = raw as Map<String, dynamic>;
-      return ResetMethodEntity(
-        id: m['id'] as String,
-        type: _mapType(m['type'] as String?),
-        title: m['title'] as String,
-        description: m['description'] as String,
-        iconColorHex: m['icon_color_hex'] as String,
-        iconKey: m['icon_key'] as String,
-      );
-    }).toList();
+    try {
+      final response = await _api.raw.get<List<dynamic>>('/auth/reset-methods');
+      return (response.data ?? []).map((raw) {
+        final m = raw as Map<String, dynamic>;
+        return ResetMethodEntity(
+          id: m['id'] as String,
+          type: _mapType(m['type'] as String?),
+          title: m['title'] as String,
+          description: m['description'] as String,
+          iconColorHex: m['icon_color_hex'] as String,
+          iconKey: m['icon_key'] as String,
+        );
+      }).toList();
+    } on DioException catch (e) {
+      throw _map(e);
+    }
   }
 
   ResetMethodType _mapType(String? raw) {
@@ -98,30 +111,38 @@ class HttpAuthRepository implements AuthRepository {
     required String methodId,
     required String email,
   }) async {
-    final response = await _api.raw.post<Map<String, dynamic>>(
-      '/auth/password-reset',
-      data: {'email': email, 'method': methodId},
-    );
-    final data = response.data!;
-    return PasswordSentResult(
-      email: data['email'] as String,
-      sentAt: DateTime.parse(data['sent_at'] as String),
-      canResend: data['can_resend'] as bool? ?? true,
-    );
+    try {
+      final response = await _api.raw.post<Map<String, dynamic>>(
+        '/auth/password-reset',
+        data: {'email': email, 'method': methodId},
+      );
+      final data = response.data!;
+      return PasswordSentResult(
+        email: data['email'] as String,
+        sentAt: DateTime.parse(data['sent_at'] as String),
+        canResend: data['can_resend'] as bool? ?? true,
+      );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
   }
 
   @override
   Future<PasswordSentResult> resendPassword({required String email}) async {
-    final response = await _api.raw.post<Map<String, dynamic>>(
-      '/auth/password-reset/resend',
-      data: {'email': email},
-    );
-    final data = response.data!;
-    return PasswordSentResult(
-      email: data['email'] as String,
-      sentAt: DateTime.parse(data['sent_at'] as String),
-      canResend: data['can_resend'] as bool? ?? true,
-    );
+    try {
+      final response = await _api.raw.post<Map<String, dynamic>>(
+        '/auth/password-reset/resend',
+        data: {'email': email},
+      );
+      final data = response.data!;
+      return PasswordSentResult(
+        email: data['email'] as String,
+        sentAt: DateTime.parse(data['sent_at'] as String),
+        canResend: data['can_resend'] as bool? ?? true,
+      );
+    } on DioException catch (e) {
+      throw _map(e);
+    }
   }
 
   @override
@@ -129,11 +150,17 @@ class HttpAuthRepository implements AuthRepository {
     try {
       await _api.raw.post<void>('/auth/logout');
     } on DioException {
-      // Local clear still happens.
+      // Clear local session even if the network call fails.
     }
     await _session.clear();
   }
 
   @override
   Future<bool> hasValidSession() => Future.value(_session.isAuthenticated);
+
+  Exception _map(DioException e) {
+    return e.error is ApiException
+        ? e.error as ApiException
+        : ApiException.fromDio(e);
+  }
 }

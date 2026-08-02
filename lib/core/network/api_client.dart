@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import 'api_config.dart';
+import 'api_exception.dart';
 import 'etag_cache.dart';
 import 'token_storage.dart';
 
@@ -13,11 +14,12 @@ class ApiClient {
   ApiClient({
     required TokenStorage tokenStorage,
     required EtagCache etagCache,
-    OnUnauthorized? onUnauthorized,
+    this.onUnauthorized,
     Dio? dio,
+    Dio? refreshDio,
+    Dio? retryDio,
   })  : _tokens = tokenStorage,
         _etag = etagCache,
-        _onUnauthorized = onUnauthorized,
         _dio = dio ??
             Dio(
               BaseOptions(
@@ -27,8 +29,21 @@ class ApiClient {
                 headers: {'Content-Type': 'application/json'},
               ),
             ) {
+    final base = _dio.options.baseUrl.isNotEmpty
+        ? _dio.options.baseUrl
+        : ApiConfig.baseUrl;
+    final plain = BaseOptions(
+      baseUrl: base,
+      headers: {'Content-Type': 'application/json'},
+      connectTimeout: const Duration(seconds: 12),
+      receiveTimeout: const Duration(seconds: 20),
+    );
+    _refreshDio = refreshDio ?? Dio(plain);
+    // No interceptors — used only to replay a request after token refresh.
+    _retryDio = retryDio ?? Dio(plain);
+
     _dio.interceptors.add(
-      InterceptorsWrapper(
+      QueuedInterceptorsWrapper(
         onRequest: _onRequest,
         onResponse: _onResponse,
         onError: _onError,
@@ -37,9 +52,11 @@ class ApiClient {
   }
 
   final Dio _dio;
+  late final Dio _refreshDio;
+  late final Dio _retryDio;
   final TokenStorage _tokens;
   final EtagCache _etag;
-  final OnUnauthorized? _onUnauthorized;
+  final OnUnauthorized? onUnauthorized;
   bool _refreshing = false;
 
   Dio get raw => _dio;
@@ -66,15 +83,12 @@ class ApiClient {
     ResponseInterceptorHandler handler,
   ) async {
     final path = response.requestOptions.path;
-    final etag = response.headers.value('etag');
-    if (response.statusCode == 200 && etag != null) {
-      await _etag.save(
-        path: path,
-        etag: etag.replaceAll('"', ''),
-        body: response.data is String
-            ? response.data as String
-            : jsonEncode(response.data),
-      );
+    if (response.statusCode == 200 && response.data != null) {
+      final etag = response.headers.value('etag')?.replaceAll('"', '');
+      final body = response.data is String
+          ? response.data as String
+          : jsonEncode(response.data);
+      await _etag.save(path: path, etag: etag ?? 'local', body: body);
     }
     if (response.statusCode == 304) {
       final cached = _etag.bodyFor(path);
@@ -94,20 +108,64 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    if (_isConnectionIssue(err) &&
+        err.requestOptions.method.toUpperCase() == 'GET') {
+      final cached = _etag.bodyFor(err.requestOptions.path);
+      if (cached != null) {
+        return handler.resolve(
+          Response(
+            requestOptions: err.requestOptions,
+            statusCode: 200,
+            data: jsonDecode(cached),
+            extra: {'from_cache': true},
+          ),
+        );
+      }
+    }
+
     if (err.response?.statusCode == 401 && !_refreshing) {
       final refreshed = await _tryRefresh();
       if (refreshed) {
         try {
-          final retry = await _dio.fetch<dynamic>(err.requestOptions);
+          final access = await _tokens.readAccessToken();
+          final opts = err.requestOptions;
+          if (access != null) {
+            opts.headers['Authorization'] = 'Bearer $access';
+          }
+          final retry = await _retryDio.fetch<dynamic>(opts);
           return handler.resolve(retry);
-        } catch (e) {
-          return handler.next(err);
+        } catch (_) {
+          await _tokens.clear();
+          onUnauthorized?.call();
+          return handler.reject(
+            DioException(
+              requestOptions: err.requestOptions,
+              error: ApiException('Session expired. Please sign in again.'),
+              type: DioExceptionType.badResponse,
+              response: err.response,
+            ),
+          );
         }
       }
       await _tokens.clear();
-      _onUnauthorized?.call();
+      onUnauthorized?.call();
     }
-    handler.next(err);
+
+    handler.reject(
+      DioException(
+        requestOptions: err.requestOptions,
+        error: ApiException.fromDio(err),
+        type: err.type,
+        response: err.response,
+      ),
+    );
+  }
+
+  bool _isConnectionIssue(DioException err) {
+    return err.type == DioExceptionType.connectionError ||
+        err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.sendTimeout;
   }
 
   Future<bool> _tryRefresh() async {
@@ -115,9 +173,7 @@ class ApiClient {
     if (refresh == null || refresh.isEmpty) return false;
     _refreshing = true;
     try {
-      final response = await Dio(
-        BaseOptions(baseUrl: ApiConfig.baseUrl),
-      ).post<Map<String, dynamic>>(
+      final response = await _refreshDio.post<Map<String, dynamic>>(
         '/auth/refresh',
         data: {'refresh_token': refresh},
       );

@@ -50,7 +50,9 @@ class _SignInScreenState extends State<SignInScreen> {
       if (!mounted) return;
       context.goNamed(RouteNames.assessmentAge);
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() {
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
     } finally {
       if (mounted) setState(() => _loading = false);
     }

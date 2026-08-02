@@ -14,10 +14,20 @@ class AssessmentSession extends ChangeNotifier {
   Future<void> init() async {
     loading = true;
     notifyListeners();
-    config = await _repository.getConfig();
-    profile = await _repository.getProfile();
-    loading = false;
-    notifyListeners();
+    try {
+      config = await _repository.getConfig();
+      try {
+        profile = await _repository.getProfile();
+      } catch (_) {
+        // Profile requires auth; keep defaults until the user signs in.
+        profile = AssessmentProfile();
+      }
+    } catch (e) {
+      debugPrint('Assessment bootstrap failed: $e');
+    } finally {
+      loading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> persist() => _repository.saveProfile(profile);
