@@ -85,11 +85,11 @@ class _UpliftScoreScreenState extends State<UpliftScoreScreen> {
                           alignment: Alignment.center,
                           children: [
                             DonutChart(segments: segments, size: 240),
-                            Positioned(
+                            const Positioned(
                               left: 0,
                               child: _NavArrow(icon: Icons.chevron_left),
                             ),
-                            Positioned(
+                            const Positioned(
                               right: 0,
                               child: _NavArrow(icon: Icons.chevron_right),
                             ),

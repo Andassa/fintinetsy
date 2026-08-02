@@ -56,7 +56,7 @@ class AppTextField extends StatelessWidget {
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: AppColors.textMuted),
+            hintStyle: const TextStyle(color: AppColors.textMuted),
             prefixIcon: prefixIcon == null
                 ? null
                 : Icon(prefixIcon, color: theme.colorScheme.onSurface, size: 22),

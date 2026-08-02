@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 # Disable rate limiting for the default test suite (dedicated tests re-enable it).
 os.environ.setdefault("RATE_LIMIT_ENABLED", "false")
+os.environ.setdefault("SECRET_KEY", "test-secret-key-ci-only!!")
 
 from app.core.config import get_settings
 from app.db.base import Base

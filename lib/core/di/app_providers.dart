@@ -11,21 +11,21 @@ import '../../features/auth/domain/usecases/get_reset_methods_usecase.dart';
 import '../../features/auth/domain/usecases/request_password_reset_usecase.dart';
 import '../../features/auth/domain/usecases/sign_in_usecase.dart';
 import '../../features/auth/domain/usecases/sign_up_usecase.dart';
-import '../../features/coach/data/repositories/fake_coach_repository.dart';
+import '../../features/coach/data/repositories/http_coach_repository.dart';
 import '../../features/coach/domain/repositories/coach_repository.dart';
 import '../../features/home/data/repositories/http_home_repository.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/home/domain/usecases/get_home_dashboard_usecase.dart';
-import '../../features/nutrition/data/repositories/fake_nutrition_repository.dart';
+import '../../features/nutrition/data/repositories/http_nutrition_repository.dart';
 import '../../features/nutrition/domain/repositories/nutrition_repository.dart';
-import '../../features/profile/data/repositories/fake_profile_repository.dart';
+import '../../features/profile/data/repositories/http_profile_repository.dart';
 import '../../features/profile/domain/repositories/profile_repository.dart';
 import '../../features/search/data/repositories/http_search_repository.dart';
 import '../../features/search/domain/repositories/search_repository.dart';
 import '../../features/search/domain/usecases/search_usecase.dart';
 import '../../features/settings/data/repositories/http_settings_repository.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
-import '../../features/stats/data/repositories/fake_stats_repository.dart';
+import '../../features/stats/data/repositories/http_stats_repository.dart';
 import '../../features/stats/domain/repositories/stats_repository.dart';
 import '../../features/workout/data/repositories/http_workout_repository.dart';
 import '../../features/workout/domain/repositories/workout_repository.dart';
@@ -46,8 +46,7 @@ class AppBinding {
   final AuthSession authSession;
 }
 
-/// Wires the app to the FastAPI backend by default.
-/// Optional local fakes: `--dart-define=USE_FAKE_DATA=true`
+/// Wires every feature repository to the FastAPI backend.
 Future<AppBinding> buildAppBinding() async {
   final tokens = TokenStorage();
   final etagCache = await EtagCache.open();
@@ -60,13 +59,8 @@ Future<AppBinding> buildAppBinding() async {
     onUnauthorized: authSession.clear,
   );
 
-  debugPrint(
-    ApiConfig.useRemoteApi
-        ? 'Using remote API at ${ApiConfig.baseUrl}'
-        : 'USE_FAKE_DATA=true — secondary modules may still use local stubs',
-  );
+  debugPrint('Using remote API at ${ApiConfig.baseUrl}');
 
-  // Core connected features always use HTTP repositories (JWT auth + REST).
   final authRepository = HttpAuthRepository(
     api: api,
     tokens: tokens,
@@ -77,12 +71,11 @@ Future<AppBinding> buildAppBinding() async {
   final assessmentRepository = HttpAssessmentRepository(api);
   final workoutRepository = HttpWorkoutRepository(api);
   final settingsRepository = HttpSettingsRepository(api);
+  final nutritionRepository = HttpNutritionRepository(api);
+  final statsRepository = HttpStatsRepository(api);
+  final profileRepository = HttpProfileRepository(api);
+  final coachRepository = HttpCoachRepository(api);
 
-  // Modules still using local stubs until their HTTP adapters ship.
-  final nutritionRepository = FakeNutritionRepository();
-  final statsRepository = FakeStatsRepository();
-  final profileRepository = FakeProfileRepository();
-  final coachRepository = FakeCoachRepository();
   final assessmentSession = AssessmentSession(assessmentRepository)..init();
   final themeController = ThemeController();
 

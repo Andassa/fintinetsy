@@ -58,7 +58,7 @@ class _FitnessLevelAssessmentScreenState
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.help_outline,
+                  const Icon(Icons.help_outline,
                       size: 16, color: AppColors.textSecondary),
                   const SizedBox(width: 6),
                   Text(

@@ -56,11 +56,7 @@ flutter run
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
 
-Remote API is **on by default**. Local fake data (legacy):
-
-```bash
-flutter run --dart-define=USE_FAKE_DATA=true
-```
+All feature repositories talk to the real REST API (no fake/local data repositories).
 
 ## Auth (JWT)
 
@@ -72,11 +68,15 @@ flutter run --dart-define=USE_FAKE_DATA=true
 
 ## Screens fed by the real REST API
 
-- Sign In / Sign Up / Reset password
+- Sign In / Sign Up / Reset password / Logout
 - Home dashboard (`GET /home/dashboard`)
 - Search (`GET /search`, `/search/suggestions`)
 - Assessment config + profile (`/assessment/config`, `/users/me/assessment`)
 - Workouts browse / category / detail / complete
+- Nutrition meals draft / scan / create
+- Stats (hydration, heart rate, calories, uplift score) + activities
+- AI coach hub / chats / thread
+- Profile (`/users/me` + assessment + stats)
 - Settings + notifications
 
 ## Offline & caching

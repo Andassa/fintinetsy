@@ -115,24 +115,22 @@ uvicorn app.main:app --reload --port 8000
 - ETag on browse, assessment config, search suggestions
 - If `CORS_ORIGINS` is `*`, credentials are off
 
-## Flutter remote API
+## Flutter client
 
-Fakes are used by default.
+The Flutter app always uses this API (HTTP repositories only).
 
 ```bash
 # API
 cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
 
 # App (iOS / desktop)
-flutter run --dart-define=USE_REMOTE_API=true \
-  --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
+flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
 
 # Android emulator
-flutter run --dart-define=USE_REMOTE_API=true \
-  --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
 
-HTTP repos wired: auth, home, search.
+HTTP repos: auth, home, search, assessment, workouts, nutrition, stats, activities, coach, profile, settings.
 
 ## Tests
 

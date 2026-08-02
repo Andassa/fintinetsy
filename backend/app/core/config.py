@@ -16,7 +16,10 @@ class Settings(BaseSettings):
     debug: bool = True
     api_v1_prefix: str = "/api/v1"
 
-    secret_key: str = Field(min_length=16)
+    secret_key: str = Field(
+        default="dev-only-secret-key-change-me",
+        min_length=16,
+    )
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 30
     password_min_length: int = 8

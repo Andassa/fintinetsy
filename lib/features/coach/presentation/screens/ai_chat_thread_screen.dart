@@ -36,10 +36,10 @@ class _AiChatThreadScreenState extends State<AiChatThreadScreen> {
   }
 
   Widget _botAvatar() {
-    return CircleAvatar(
+    return const CircleAvatar(
       radius: 16,
       backgroundColor: AppColors.primarySoft,
-      backgroundImage: const AssetImage(AppAssets.aiRobot),
+      backgroundImage: AssetImage(AppAssets.aiRobot),
     );
   }
 
