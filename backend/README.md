@@ -29,6 +29,15 @@ uvicorn app.main:app --reload --port 8000
 | POST | `/password-reset/resend` | public |
 | GET | `/me` | Bearer |
 
+## Assessment / Users
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/assessment/config` | public |
+| GET | `/users/me` | Bearer |
+| GET | `/users/me/assessment` | Bearer |
+| PUT | `/users/me/assessment` | Bearer |
+
 ## Tests
 
 ```bash
