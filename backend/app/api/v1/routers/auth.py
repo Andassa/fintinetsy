@@ -6,6 +6,7 @@ from app.schemas.auth import (
     AuthResponse,
     LoginRequest,
     MessageOut,
+    OAuthGoogleRequest,
     PasswordResetRequestBody,
     PasswordResetResendBody,
     PasswordResetResponse,
@@ -60,6 +61,25 @@ async def refresh(
     auth: AuthSvc,
 ) -> AuthResponse:
     return await auth.refresh(session, body.refresh_token)
+
+
+@router.post(
+    "/oauth/google",
+    response_model=AuthResponse,
+    dependencies=[Depends(rate_limit_auth)],
+)
+async def oauth_google(
+    body: OAuthGoogleRequest,
+    session: DbSession,
+    auth: AuthSvc,
+) -> AuthResponse:
+    """Google OAuth2 / OpenID Connect sign-in (ID token → JWT session)."""
+    return await auth.oauth_google(
+        session,
+        id_token=body.id_token,
+        email=str(body.email) if body.email else None,
+        name=body.name,
+    )
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)

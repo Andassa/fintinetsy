@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 import 'package:fintinetsy/core/network/api_client.dart';
-import 'package:fintinetsy/core/network/etag_cache.dart';
+import 'package:fintinetsy/core/offline/offline_cache.dart';
 import 'package:fintinetsy/core/network/token_storage.dart';
 import 'package:fintinetsy/features/search/data/repositories/http_search_repository.dart';
 import 'package:fintinetsy/features/workout/data/repositories/http_workout_repository.dart';
@@ -18,7 +18,7 @@ void main() {
     adapter = DioAdapter(dio: dio);
     api = ApiClient(
       tokenStorage: TokenStorage.memory(),
-      etagCache: EtagCache.memory(),
+      offlineCache: OfflineCache.memory(),
       dio: dio,
     );
   });

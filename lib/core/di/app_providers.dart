@@ -10,6 +10,7 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/get_reset_methods_usecase.dart';
 import '../../features/auth/domain/usecases/request_password_reset_usecase.dart';
 import '../../features/auth/domain/usecases/sign_in_usecase.dart';
+import '../../features/auth/domain/usecases/sign_in_with_google_oauth_usecase.dart';
 import '../../features/auth/domain/usecases/sign_up_usecase.dart';
 import '../../features/coach/data/repositories/http_coach_repository.dart';
 import '../../features/coach/domain/repositories/coach_repository.dart';
@@ -32,8 +33,10 @@ import '../../features/workout/domain/repositories/workout_repository.dart';
 import '../auth/auth_session.dart';
 import '../network/api_client.dart';
 import '../network/api_config.dart';
-import '../network/etag_cache.dart';
+import '../network/token_refresh_service.dart';
 import '../network/token_storage.dart';
+import '../offline/offline_cache.dart';
+import '../offline/offline_status.dart';
 import '../theme/theme_controller.dart';
 
 class AppBinding {
@@ -47,19 +50,29 @@ class AppBinding {
 }
 
 /// Wires every feature repository to the FastAPI backend.
+///
+/// Bootstrap order:
+/// 1. Open Hive [OfflineCache]
+/// 2. Restore JWT session via [AuthSession.bootstrap]
+/// 3. Build [ApiClient] with refresh + offline interceptors
+/// 4. Register HTTP repositories for each feature
 Future<AppBinding> buildAppBinding() async {
   final tokens = TokenStorage();
-  final etagCache = await EtagCache.open();
+  final offlineCache = await OfflineCache.open();
+  final offlineStatus = OfflineStatus();
   final authSession = AuthSession(tokens);
   await authSession.bootstrap();
 
   final api = ApiClient(
     tokenStorage: tokens,
-    etagCache: etagCache,
+    offlineCache: offlineCache,
+    offlineStatus: offlineStatus,
     onUnauthorized: authSession.clear,
   );
 
-  debugPrint('Using remote API at ${ApiConfig.baseUrl}');
+  debugPrint(
+    'API ${ApiConfig.baseUrl} | Hive offline=${offlineCache.isHiveBacked}',
+  );
 
   final authRepository = HttpAuthRepository(
     api: api,
@@ -82,10 +95,14 @@ Future<AppBinding> buildAppBinding() async {
   final providers = <SingleChildWidget>[
     ChangeNotifierProvider<ThemeController>.value(value: themeController),
     ChangeNotifierProvider<AuthSession>.value(value: authSession),
+    ChangeNotifierProvider<OfflineStatus>.value(value: offlineStatus),
     Provider<TokenStorage>.value(value: tokens),
+    Provider<OfflineCache>.value(value: offlineCache),
+    Provider<TokenRefreshService>.value(value: api.tokenRefreshService),
     Provider<ApiClient>.value(value: api),
     Provider<AuthRepository>.value(value: authRepository),
     Provider(create: (_) => SignInUseCase(authRepository)),
+    Provider(create: (_) => SignInWithGoogleOAuthUseCase(authRepository)),
     Provider(create: (_) => SignUpUseCase(authRepository)),
     Provider(create: (_) => GetResetMethodsUseCase(authRepository)),
     Provider(create: (_) => RequestPasswordResetUseCase(authRepository)),

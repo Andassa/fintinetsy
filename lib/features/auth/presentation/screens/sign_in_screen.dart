@@ -12,6 +12,7 @@ import '../../../../core/widgets/auth_text_link.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../domain/entities/auth_credentials.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
+import '../../domain/usecases/sign_in_with_google_oauth_usecase.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -46,6 +47,32 @@ class _SignInScreenState extends State<SignInScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         ),
+      );
+      if (!mounted) return;
+      context.goNamed(RouteNames.assessmentAge);
+    } catch (e) {
+      setState(() {
+        _error = e.toString().replaceFirst('Exception: ', '');
+      });
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// Google OAuth2 / OpenID Connect (dev uses mock ID token → backend JWT).
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final email = _emailController.text.trim().isEmpty
+          ? 'google.user@uplift.ai'
+          : _emailController.text.trim();
+      await context.read<SignInWithGoogleOAuthUseCase>()(
+        idToken: 'mock.$email',
+        email: email,
+        name: email.split('@').first,
       );
       if (!mounted) return;
       context.goNamed(RouteNames.assessmentAge);
@@ -144,12 +171,31 @@ class _SignInScreenState extends State<SignInScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _SocialButton(icon: Icons.camera_alt_outlined, onTap: () {}),
+                        _SocialButton(
+                          icon: Icons.g_mobiledata,
+                          tooltip: 'Continue with Google (OAuth)',
+                          onTap: _loading ? () {} : _signInWithGoogle,
+                        ),
                         const SizedBox(width: 14),
-                        _SocialButton(icon: Icons.facebook, onTap: () {}),
+                        _SocialButton(
+                          icon: Icons.facebook,
+                          tooltip: 'Facebook (coming soon)',
+                          onTap: () {},
+                        ),
                         const SizedBox(width: 14),
-                        _SocialButton(icon: Icons.business, onTap: () {}),
+                        _SocialButton(
+                          icon: Icons.apple,
+                          tooltip: 'Apple (coming soon)',
+                          onTap: () {},
+                        ),
                       ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Google uses OAuth2 → JWT session',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 28),
                     AuthTextLink(
@@ -183,14 +229,19 @@ class _SignInScreenState extends State<SignInScreen> {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.icon, required this.onTap});
+  const _SocialButton({
+    required this.icon,
+    required this.onTap,
+    this.tooltip,
+  });
 
   final IconData icon;
   final VoidCallback onTap;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final button = InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
@@ -204,5 +255,7 @@ class _SocialButton extends StatelessWidget {
         child: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
       ),
     );
+    if (tooltip == null) return button;
+    return Tooltip(message: tooltip!, child: button);
   }
 }

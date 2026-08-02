@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     rate_limit_auth_window_seconds: int = 900
     etag_enabled: bool = True
 
+    # OAuth (Google). When mock is enabled, id_tokens prefixed with `mock.` are accepted.
+    oauth_google_client_id: str = ""
+    oauth_allow_mock: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:

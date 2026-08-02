@@ -1,41 +1,81 @@
 # Uplift.ai (Fintinetsy)
 
-Full-stack fitness app: **Flutter** client + **FastAPI** backend, connected over REST with JWT authentication, Hive offline cache, and ETag revalidation.
+Full-stack fitness app: **Flutter** client + **FastAPI** backend.
+
+Connected over REST with:
+
+- **JWT** login/register/logout
+- **OAuth2 / OpenID Connect (Google)** → same JWT session
+- **Refresh-token rotation** on HTTP 401
+- **Hive offline cache** + ETag revalidation
+- User-facing network error messages (`ApiException`)
 
 ## Architecture
 
 ```
 lib/
-  core/           # DI, router, theme, network (Dio + Hive + secure tokens)
-  features/       # feature-first Clean Architecture
-    */domain/     # entities, repository contracts, use cases
-    */data/       # HTTP repositories (real API)
-    */presentation/
+  core/
+    network/     ApiClient, TokenRefreshService, TokenStorage, ApiException
+    offline/     OfflineCache (Hive), OfflineStatus + OfflineBanner
+    di/          app_providers.dart — all HTTP repositories
+    router/      GoRouter + auth redirects
+  features/*/
+    domain/      entities, repository contracts, use cases
+    data/        Http*Repository (Dio → FastAPI)
+    presentation/
 backend/
-  app/            # FastAPI: router → service → repository → model
+  app/           router → service → repository → model
 ```
 
-State management: **Provider**. Navigation: **GoRouter**. Networking: **Dio**.
+### Data flow
+
+```mermaid
+sequenceDiagram
+  participant UI
+  participant Repo as HttpRepository
+  participant Api as ApiClient
+  participant Hive as OfflineCache(Hive)
+  participant API as FastAPI
+
+  UI->>Repo: getDashboard()
+  Repo->>Api: GET /home/dashboard
+  Api->>API: Bearer access_token
+  alt 401 Unauthorized
+    Api->>API: POST /auth/refresh
+    API-->>Api: new access + refresh
+    Api->>Hive: (tokens in SecureStorage)
+    Api->>API: retry GET
+  else connection error
+    Api->>Hive: read cached body
+    Hive-->>Api: JSON
+    Api-->>Repo: from_cache=true
+  else 200 OK
+    Api->>Hive: save body + ETag
+    API-->>Api: JSON
+  end
+  Repo-->>UI: domain entity
+```
+
+State management: **Provider**. Navigation: **GoRouter**.
 
 ## Prerequisites
 
 - Flutter SDK 3.12+
-- Python 3.11+ (backend)
-- Backend running on port `8000` (see `backend/README.md`)
+- Python 3.11+
+- Backend on port `8000` (`backend/README.md`)
 
 ## Backend setup
 
 ```bash
 cd backend
-python -m venv .venv
-source .venv/bin/activate
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
 
-API docs: http://127.0.0.1:8000/docs  
-Base path used by the app: `/api/v1`
+OpenAPI: http://127.0.0.1:8000/docs  
+Base path: `/api/v1`
 
 ## Flutter setup
 
@@ -44,64 +84,77 @@ flutter pub get
 flutter run
 ```
 
-### API URL (important)
-
-| Platform | Default / recommended `API_BASE_URL` |
-|----------|--------------------------------------|
-| macOS / iOS simulator / desktop | `http://127.0.0.1:8000/api/v1` (default) |
+| Platform | `API_BASE_URL` |
+|----------|----------------|
+| Desktop / iOS simulator | `http://127.0.0.1:8000/api/v1` (default) |
 | Android emulator | `http://10.0.2.2:8000/api/v1` |
 
 ```bash
-# Android emulator example
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
 ```
 
-All feature repositories talk to the real REST API (no fake/local data repositories).
+## Authentication
 
-## Auth (JWT)
+### JWT (email / password)
 
-1. Register / login → `access_token` + `refresh_token` stored in **flutter_secure_storage**
-2. Dio interceptor injects `Authorization: Bearer …`
-3. On `401`, interceptor calls `POST /auth/refresh`, rotates tokens, retries the request
-4. Logout clears tokens and calls `POST /auth/logout`
-5. GoRouter redirects unauthenticated users to Sign In
+1. `POST /auth/register` or `POST /auth/login`
+2. Store `access_token` + `refresh_token` in **flutter_secure_storage**
+3. Dio injects `Authorization: Bearer …`
+4. On **401**, `TokenRefreshService.rotateTokens()` calls `POST /auth/refresh`, saves the new pair, retries the request
+5. `POST /auth/logout` revokes refresh tokens server-side; client clears storage
 
-## Screens fed by the real REST API
+### OAuth2 / Google (OpenID Connect)
 
-- Sign In / Sign Up / Reset password / Logout
-- Home dashboard (`GET /home/dashboard`)
-- Search (`GET /search`, `/search/suggestions`)
-- Assessment config + profile (`/assessment/config`, `/users/me/assessment`)
-- Workouts browse / category / detail / complete
-- Nutrition meals draft / scan / create
-- Stats (hydration, heart rate, calories, uplift score) + activities
-- AI coach hub / chats / thread
-- Profile (`/users/me` + assessment + stats)
-- Settings + notifications
+1. Sign-in screen → **Continue with Google**
+2. Client sends ID token to `POST /auth/oauth/google`
+3. Backend validates (or accepts `mock.<email>` when `oauth_allow_mock=true` for local/CI)
+4. Backend issues the **same JWT access + refresh** pair as password login
 
-## Offline & caching
+Production: set `OAUTH_GOOGLE_CLIENT_ID` and pass a real Google ID token.
 
-- Successful GET responses are stored in **Hive** (`EtagCache`) with ETag values
-- `If-None-Match` is sent on subsequent GETs; `304` serves the Hive body
-- On connection errors, GET handlers fall back to the last Hive body when available
-- User-facing messages come from `ApiException` (timeouts, offline, 401, 429, …)
+## Offline mode (Hive)
+
+| Component | Role |
+|-----------|------|
+| `OfflineCache` | Hive box `uplift_offline_cache` — stores JSON body + ETag per path |
+| `ApiClient` | On successful GET → `saveResponse`; on connection error → serve cache |
+| `OfflineStatus` / `OfflineBanner` | UI signal when data came from Hive |
+
+Flow:
+
+1. Online GET 200 → write Hive (`body:` + `etag:`)
+2. Later GET with `If-None-Match` → 304 → decode Hive body
+3. No network → `DioExceptionType.connection*` → Hive fallback + orange banner
+
+## REST APIs used by screens
+
+| Screen / feature | Endpoints |
+|------------------|-----------|
+| Sign in / up / reset | `/auth/login`, `/register`, `/password-reset`, `/oauth/google` |
+| Home | `GET /home/dashboard` |
+| Search | `GET /search`, `/search/suggestions` |
+| Assessment | `GET /assessment/config`, `GET/PUT /users/me/assessment` |
+| Workouts | `/workouts/browse`, `/categories/{id}`, `/workouts/{id}`, `…/complete` |
+| Nutrition | `/meals/draft`, `/meals/scan`, `POST /meals` |
+| Stats | `/stats/hydration`, `/heart-rate`, `/calories`, `/uplift-score` |
+| Activities | `/activities/status`, `/directions`, create/complete |
+| Coach | `/coach/hub`, `/coach/chats`, `/chats/{id}/messages` |
+| Profile | `/users/me` + assessment + calorie intake |
+| Settings | `/settings`, `/notifications` |
 
 ## Tests
 
 ```bash
-# Flutter — repository unit tests (Dio + http_mock_adapter)
 flutter test
-
-# Backend
 cd backend && pytest -q
 ```
 
-Minimum repository coverage includes auth, home, search/workouts, and refresh/ETag client tests.
+Coverage includes repository unit tests (`http_mock_adapter`), `TokenRefreshService`, Hive offline fallback, and Google OAuth exchange.
 
 ## CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs `flutter analyze`, `flutter test`, and backend `pytest`.
+`.github/workflows/ci.yml` — `flutter analyze --no-fatal-infos`, `flutter test`, backend `pytest` (with `SECRET_KEY`).
 
 ## Lint
 
-`analysis_options.yaml` includes `flutter_lints` plus stricter rules (`prefer_const_constructors`, `avoid_print`, …).
+`analysis_options.yaml` includes `flutter_lints` plus project rules (`prefer_const_constructors`, `avoid_print`, …).

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/offline/offline_status.dart';
 import '../../../../core/widgets/section_header.dart';
 import '../../domain/entities/home_dashboard.dart';
 import '../../domain/usecases/get_home_dashboard_usecase.dart';
@@ -60,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final bottomPad = math.max(MediaQuery.paddingOf(context).bottom, 16.0);
+    final offline = context.watch<OfflineStatus>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
@@ -67,47 +69,52 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? AppColors.darkSurface
             : const Color(0xFFF7F7F8),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : _error != null
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.wifi_off_rounded,
-                            size: 48,
-                            color: Theme.of(context).colorScheme.error,
+        body: Column(
+          children: [
+            OfflineBanner(status: offline),
+            Expanded(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _error != null
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.wifi_off_rounded,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _error.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: _load,
+                                  child: const Text('Retry'),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      context.pushNamed(RouteNames.noInternet),
+                                  child: const Text('Check connection'),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            _error.toString(),
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: _load,
-                            child: const Text('Retry'),
-                          ),
-                          TextButton(
-                            onPressed: () =>
-                                context.pushNamed(RouteNames.noInternet),
-                            child: const Text('Check connection'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _load,
-                    child: CustomScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(
-                        parent: BouncingScrollPhysics(),
-                      ),
-                      slivers: [
+                        )
+                      : RefreshIndicator(
+                          onRefresh: _load,
+                          child: CustomScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: BouncingScrollPhysics(),
+                            ),
+                            slivers: [
+                        // Home dashboard content from REST /home/dashboard
                         SliverToBoxAdapter(
                           child: HomeHeader(
                             user: _data!.user,
@@ -248,6 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+            ),
+          ],
+        ),
       ),
     );
   }

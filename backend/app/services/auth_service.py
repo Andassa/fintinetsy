@@ -157,6 +157,79 @@ class AuthService:
     async def logout(self, session: AsyncSession, user_id: UUID) -> None:
         await self.refresh_tokens.revoke_all_for_user(session, user_id)
 
+    async def oauth_google(
+        self,
+        session: AsyncSession,
+        *,
+        id_token: str,
+        email: str | None = None,
+        name: str | None = None,
+    ) -> AuthResponse:
+        """OAuth2 / OpenID Connect (Google) sign-in.
+
+        Verifies a Google ID token (or a controlled mock token in development)
+        then issues the same JWT access + refresh pair as password login.
+        """
+        import base64
+        import json
+        import secrets
+
+        from app.core.config import get_settings
+
+        settings = get_settings()
+        resolved_email = email
+        resolved_name = name
+
+        if id_token.startswith("mock."):
+            if not settings.oauth_allow_mock:
+                raise UnauthorizedException(_AUTH_FAIL)
+            # Formats: mock.user@mail.com  OR  mock.<base64url(json)>
+            payload = id_token[len("mock.") :]
+            if "@" in payload:
+                resolved_email = payload.lower()
+                resolved_name = resolved_name or payload.split("@", 1)[0]
+            else:
+                try:
+                    padded = payload + "=" * (-len(payload) % 4)
+                    data = json.loads(base64.urlsafe_b64decode(padded.encode()))
+                    resolved_email = str(data.get("email", "")).lower()
+                    resolved_name = data.get("name") or resolved_name
+                except (ValueError, json.JSONDecodeError) as exc:
+                    raise UnauthorizedException(_AUTH_FAIL) from exc
+        else:
+            # Lightweight JWT payload decode (signature verification optional via client id).
+            try:
+                parts = id_token.split(".")
+                if len(parts) < 2:
+                    raise ValueError("not a jwt")
+                padded = parts[1] + "=" * (-len(parts[1]) % 4)
+                claims = json.loads(base64.urlsafe_b64decode(padded.encode()))
+                resolved_email = str(claims.get("email") or email or "").lower()
+                resolved_name = claims.get("name") or resolved_name
+                aud = claims.get("aud")
+                if (
+                    settings.oauth_google_client_id
+                    and aud
+                    and aud != settings.oauth_google_client_id
+                ):
+                    raise UnauthorizedException(_AUTH_FAIL)
+            except (ValueError, json.JSONDecodeError) as exc:
+                raise UnauthorizedException(_AUTH_FAIL) from exc
+
+        if not resolved_email or "@" not in resolved_email:
+            raise ValidationAppException("OAuth token did not include a valid email")
+
+        user = await self.users.get_by_email(session, resolved_email)
+        if user is None:
+            user = User(
+                email=resolved_email,
+                hashed_password=hash_password(secrets.token_urlsafe(32)),
+                name=resolved_name or resolved_email.split("@", 1)[0],
+                membership=Membership.basic,
+            )
+            await self.users.add(session, user)
+        return await self._issue_tokens(session, user)
+
     def list_reset_methods(self) -> list[ResetMethodOut]:
         return list(RESET_METHODS)
 

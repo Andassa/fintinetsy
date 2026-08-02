@@ -58,6 +58,27 @@ class HttpAuthRepository implements AuthRepository {
     }
   }
 
+  @override
+  Future<UserEntity> signInWithGoogleOAuth({
+    required String idToken,
+    String? email,
+    String? name,
+  }) async {
+    try {
+      final response = await api.raw.post<Map<String, dynamic>>(
+        '/auth/oauth/google',
+        data: {
+          'id_token': idToken,
+          'email': ?email,
+          'name': ?name,
+        },
+      );
+      return _persistAuth(response.data!);
+    } on DioException catch (e) {
+      throw _map(e);
+    }
+  }
+
   Future<UserEntity> _persistAuth(Map<String, dynamic> data) async {
     await tokens.saveTokens(
       accessToken: data['access_token'] as String,

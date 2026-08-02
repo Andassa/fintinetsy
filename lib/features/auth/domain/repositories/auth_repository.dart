@@ -12,6 +12,13 @@ abstract class AuthRepository {
     required String confirmPassword,
   });
 
+  /// Google OAuth2 / OpenID Connect — exchanges an ID token for JWT session.
+  Future<UserEntity> signInWithGoogleOAuth({
+    required String idToken,
+    String? email,
+    String? name,
+  });
+
   Future<List<ResetMethodEntity>> getResetMethods();
 
   Future<PasswordSentResult> requestPasswordReset({

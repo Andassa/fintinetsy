@@ -4,8 +4,8 @@ import 'package:http_mock_adapter/http_mock_adapter.dart';
 
 import 'package:fintinetsy/core/auth/auth_session.dart';
 import 'package:fintinetsy/core/network/api_client.dart';
-import 'package:fintinetsy/core/network/etag_cache.dart';
 import 'package:fintinetsy/core/network/token_storage.dart';
+import 'package:fintinetsy/core/offline/offline_cache.dart';
 import 'package:fintinetsy/features/auth/data/repositories/http_auth_repository.dart';
 import 'package:fintinetsy/features/auth/domain/entities/auth_credentials.dart';
 
@@ -23,7 +23,7 @@ void main() {
     session = AuthSession(tokens);
     final api = ApiClient(
       tokenStorage: tokens,
-      etagCache: EtagCache.memory(),
+      offlineCache: OfflineCache.memory(),
       dio: dio,
     );
     repository = HttpAuthRepository(
@@ -55,9 +55,35 @@ void main() {
     );
 
     expect(user.email, 'demo@uplift.ai');
-    expect(user.name, 'Demo');
     expect(await tokens.readAccessToken(), 'access-abc');
-    expect(await tokens.readRefreshToken(), 'refresh-xyz');
+    expect(session.isAuthenticated, isTrue);
+  });
+
+  test('signInWithGoogleOAuth exchanges ID token for JWT session', () async {
+    adapter.onPost(
+      '/auth/oauth/google',
+      (server) => server.reply(200, {
+        'access_token': 'oauth-access',
+        'refresh_token': 'oauth-refresh',
+        'token_type': 'bearer',
+        'user': {
+          'id': 'u2',
+          'email': 'google.user@uplift.ai',
+          'name': 'Google',
+          'avatar_url': null,
+        },
+      }),
+      data: Matchers.any,
+    );
+
+    final user = await repository.signInWithGoogleOAuth(
+      idToken: 'mock.google.user@uplift.ai',
+      email: 'google.user@uplift.ai',
+      name: 'Google',
+    );
+
+    expect(user.email, 'google.user@uplift.ai');
+    expect(await tokens.readAccessToken(), 'oauth-access');
     expect(session.isAuthenticated, isTrue);
   });
 

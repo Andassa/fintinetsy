@@ -1,25 +1,32 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
+import '../offline/offline_cache.dart';
+import '../offline/offline_status.dart';
 import 'api_config.dart';
 import 'api_exception.dart';
-import 'etag_cache.dart';
+import 'token_refresh_service.dart';
 import 'token_storage.dart';
 
 typedef OnUnauthorized = void Function();
 
+/// Authenticated HTTP client with:
+/// - Bearer JWT injection
+/// - **Refresh-token rotation** on HTTP 401 ([TokenRefreshService])
+/// - **Hive offline cache** + ETag revalidation ([OfflineCache])
 class ApiClient {
   ApiClient({
     required TokenStorage tokenStorage,
-    required EtagCache etagCache,
+    required OfflineCache offlineCache,
+    TokenRefreshService? tokenRefreshService,
+    this.offlineStatus,
     this.onUnauthorized,
     Dio? dio,
     Dio? refreshDio,
     Dio? retryDio,
   })  : _tokens = tokenStorage,
-        _etag = etagCache,
+        _cache = offlineCache,
         _dio = dio ??
             Dio(
               BaseOptions(
@@ -38,9 +45,13 @@ class ApiClient {
       connectTimeout: const Duration(seconds: 12),
       receiveTimeout: const Duration(seconds: 20),
     );
-    _refreshDio = refreshDio ?? Dio(plain);
-    // No interceptors — used only to replay a request after token refresh.
+    final refreshClient = refreshDio ?? Dio(plain);
     _retryDio = retryDio ?? Dio(plain);
+    _refresher = tokenRefreshService ??
+        TokenRefreshService(
+          tokenStorage: tokenStorage,
+          refreshDio: refreshClient,
+        );
 
     _dio.interceptors.add(
       QueuedInterceptorsWrapper(
@@ -52,14 +63,16 @@ class ApiClient {
   }
 
   final Dio _dio;
-  late final Dio _refreshDio;
   late final Dio _retryDio;
+  late final TokenRefreshService _refresher;
   final TokenStorage _tokens;
-  final EtagCache _etag;
+  final OfflineCache _cache;
+  final OfflineStatus? offlineStatus;
   final OnUnauthorized? onUnauthorized;
-  bool _refreshing = false;
 
   Dio get raw => _dio;
+  TokenRefreshService get tokenRefreshService => _refresher;
+  OfflineCache get offlineCache => _cache;
 
   Future<void> _onRequest(
     RequestOptions options,
@@ -70,7 +83,7 @@ class ApiClient {
       options.headers['Authorization'] = 'Bearer $access';
     }
     if (options.method.toUpperCase() == 'GET') {
-      final etag = _etag.etagFor(options.path);
+      final etag = _cache.etagFor(options.path);
       if (etag != null) {
         options.headers['If-None-Match'] = etag;
       }
@@ -88,17 +101,20 @@ class ApiClient {
       final body = response.data is String
           ? response.data as String
           : jsonEncode(response.data);
-      await _etag.save(path: path, etag: etag ?? 'local', body: body);
+      await _cache.saveResponse(path: path, body: body, etag: etag);
+      offlineStatus?.markOnline();
     }
     if (response.statusCode == 304) {
-      final cached = _etag.bodyFor(path);
+      final cached = _cache.bodyFor(path);
       if (cached != null) {
         response = Response(
           requestOptions: response.requestOptions,
           statusCode: 200,
           data: jsonDecode(cached),
           headers: response.headers,
+          extra: {'from_cache': true, 'etag_304': true},
         );
+        offlineStatus?.markFromCache('Not modified — served from Hive cache.');
       }
     }
     handler.next(response);
@@ -108,23 +124,26 @@ class ApiClient {
     DioException err,
     ErrorInterceptorHandler handler,
   ) async {
+    // Offline mode: serve last Hive body for GET requests.
     if (_isConnectionIssue(err) &&
         err.requestOptions.method.toUpperCase() == 'GET') {
-      final cached = _etag.bodyFor(err.requestOptions.path);
+      final cached = _cache.bodyFor(err.requestOptions.path);
       if (cached != null) {
+        offlineStatus?.markFromCache();
         return handler.resolve(
           Response(
             requestOptions: err.requestOptions,
             statusCode: 200,
             data: jsonDecode(cached),
-            extra: {'from_cache': true},
+            extra: {'from_cache': true, 'offline': true},
           ),
         );
       }
     }
 
-    if (err.response?.statusCode == 401 && !_refreshing) {
-      final refreshed = await _tryRefresh();
+    // Access token expired → rotate refresh token, then retry once.
+    if (err.response?.statusCode == 401) {
+      final refreshed = await _refresher.rotateTokens();
       if (refreshed) {
         try {
           final access = await _tokens.readAccessToken();
@@ -166,29 +185,5 @@ class ApiClient {
         err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.sendTimeout;
-  }
-
-  Future<bool> _tryRefresh() async {
-    final refresh = await _tokens.readRefreshToken();
-    if (refresh == null || refresh.isEmpty) return false;
-    _refreshing = true;
-    try {
-      final response = await _refreshDio.post<Map<String, dynamic>>(
-        '/auth/refresh',
-        data: {'refresh_token': refresh},
-      );
-      final data = response.data;
-      if (data == null) return false;
-      await _tokens.saveTokens(
-        accessToken: data['access_token'] as String,
-        refreshToken: data['refresh_token'] as String,
-      );
-      return true;
-    } catch (e, st) {
-      debugPrint('Token refresh failed: $e\n$st');
-      return false;
-    } finally {
-      _refreshing = false;
-    }
   }
 }

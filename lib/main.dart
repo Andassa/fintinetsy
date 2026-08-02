@@ -10,9 +10,16 @@ import 'core/theme/theme_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // 1) Local Hive store for offline GET payloads + ETags
   await Hive.initFlutter();
+
+  // 2) DI + AuthSession.bootstrap() (awaits secure token restore)
   final binding = await buildAppBinding();
+
+  // 3) Router only after auth session is ready
   final router = createAppRouter(binding.authSession);
+
   runApp(FintinetsyApp(binding: binding, router: router));
 }
 

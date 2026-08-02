@@ -70,3 +70,16 @@ class ResetMethodOut(BaseModel):
 
 class MessageOut(BaseModel):
     message: str
+
+
+class OAuthGoogleRequest(BaseModel):
+    """Google Sign-In / OAuth2 ID token exchange.
+
+    Production: pass a real Google ID token (`id_token`).
+    Development / CI: pass `mock.<email>` when `oauth_allow_mock` is true.
+    """
+
+    id_token: str = Field(min_length=3, max_length=4096)
+    email: EmailStr | None = None
+    name: str | None = Field(default=None, max_length=120)
+    access_token: str | None = Field(default=None, max_length=4096)
