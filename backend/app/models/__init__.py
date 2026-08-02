@@ -1,3 +1,4 @@
+from app.models.activity import Activity
 from app.models.assessment import AssessmentConfigRow, AssessmentProfile, FitnessGoal
 from app.models.home import (
     HomeActivityBlobLayout,
@@ -37,4 +38,5 @@ __all__ = [
     "HydrationLog",
     "HeartRateLog",
     "CalorieLog",
+    "Activity",
 ]

@@ -73,6 +73,15 @@ uvicorn app.main:app --reload --port 8000
 | GET    | `/stats/calories/intake`| Bearer |
 | GET    | `/stats/uplift-score`   | Bearer |
 
+## Activities
+
+| Method | Path                           | Auth   |
+| ------ | ------------------------------ | ------ |
+| GET    | `/activities/status`           | Bearer |
+| GET    | `/activities/directions`       | Bearer |
+| POST   | `/activities`                  | Bearer |
+| POST   | `/activities/{id}/complete`    | Bearer |
+
 ## Tests
 
 ```bash
