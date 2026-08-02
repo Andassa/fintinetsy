@@ -12,9 +12,20 @@ abstract final class RouteNames {
   static const String assessmentVocal = 'assessment-vocal';
   static const String assessmentGoals = 'assessment-goals';
   static const String home = 'home';
+  static const String search = 'search';
+  static const String noActivities = 'no-activities';
+  static const String addActivity = 'add-activity';
+  static const String activityStatus = 'activity-status';
+  static const String directions = 'directions';
+  static const String joggingCompleted = 'jogging-completed';
   static const String addMeal = 'add-meal';
   static const String mealScan = 'meal-scan';
   static const String activity = 'activity';
+  static const String hydration = 'hydration';
+  static const String heartRate = 'heart-rate';
+  static const String calorieStats = 'calorie-stats';
+  static const String calorieIntake = 'calorie-intake';
+  static const String upliftScore = 'uplift-score';
 }
 
 abstract final class AppRoutes {
@@ -31,7 +42,18 @@ abstract final class AppRoutes {
   static const String assessmentVocal = '/assessment/vocal';
   static const String assessmentGoals = '/assessment/goals';
   static const String home = '/home';
+  static const String search = '/search';
+  static const String noActivities = '/activities/empty';
+  static const String addActivity = '/activities/add';
+  static const String activityStatus = '/activities/status';
+  static const String directions = '/activities/directions';
+  static const String joggingCompleted = '/activities/jogging-completed';
   static const String addMeal = '/meals/add';
   static const String mealScan = '/meals/scan';
   static const String activity = '/activity';
+  static const String hydration = '/stats/hydration';
+  static const String heartRate = '/stats/heart-rate';
+  static const String calorieStats = '/stats/calorie-stats';
+  static const String calorieIntake = '/stats/calorie-intake';
+  static const String upliftScore = '/stats/uplift-score';
 }

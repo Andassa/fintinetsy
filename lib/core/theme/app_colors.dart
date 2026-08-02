@@ -29,6 +29,13 @@ abstract final class AppColors {
 
   static const Color socialBorder = Color(0xFFE8E8E8);
 
+  static const Color chartPurple = Color(0xFFA283F1);
+  static const Color chartBlue = Color(0xFF2F69FF);
+  static const Color chartGreen = Color(0xFF8CC622);
+  static const Color chartRed = Color(0xFFFF4B4B);
+  static const Color hydrationBlue = Color(0xFF2962FF);
+  static const Color skipSoft = Color(0xFFFFE0C2);
+
   // Dark theme counterparts
   static const Color darkSurface = Color(0xFF121212);
   static const Color darkSurfaceAlt = Color(0xFF1E1E1E);
