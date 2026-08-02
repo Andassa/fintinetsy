@@ -26,6 +26,15 @@ import '../../features/stats/presentation/screens/hydration_screen.dart';
 import '../../features/stats/presentation/screens/jogging_completed_screen.dart';
 import '../../features/stats/presentation/screens/uplift_score_screen.dart';
 import '../../features/welcome/presentation/welcome_screen.dart';
+import '../../features/assessment/presentation/screens/avatar_assessment_screen.dart';
+import '../../features/coach/presentation/screens/ai_chat_thread_screen.dart';
+import '../../features/coach/presentation/screens/ai_chats_screen.dart';
+import '../../features/coach/presentation/screens/ai_coach_hub_screen.dart';
+import '../../features/coach/presentation/screens/ai_coach_intro_screen.dart';
+import '../../features/errors/presentation/screens/error_state_screens.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/settings/presentation/screens/account_settings_screen.dart';
+import '../../features/settings/presentation/screens/notifications_screen.dart';
 import 'route_names.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -171,6 +180,61 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.upliftScore,
       name: RouteNames.upliftScore,
       builder: (context, state) => const UpliftScoreScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.assessmentAvatar,
+      name: RouteNames.assessmentAvatar,
+      builder: (context, state) => const AvatarAssessmentScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.noInternet,
+      name: RouteNames.noInternet,
+      builder: (context, state) => const NoInternetScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.permissionDenied,
+      name: RouteNames.permissionDenied,
+      builder: (context, state) => const PermissionDeniedScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.goProGate,
+      name: RouteNames.goProGate,
+      builder: (context, state) => const GoProGateScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.accountSettings,
+      name: RouteNames.accountSettings,
+      builder: (context, state) => const AccountSettingsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.notifications,
+      name: RouteNames.notifications,
+      builder: (context, state) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.profile,
+      name: RouteNames.profile,
+      builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aiCoachIntro,
+      name: RouteNames.aiCoachIntro,
+      builder: (context, state) => const AiCoachIntroScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aiCoachHub,
+      name: RouteNames.aiCoachHub,
+      builder: (context, state) => const AiCoachHubScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aiChats,
+      name: RouteNames.aiChats,
+      builder: (context, state) => const AiChatsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.aiChatThread,
+      name: RouteNames.aiChatThread,
+      builder: (context, state) => const AiChatThreadScreen(),
     ),
   ],
 );

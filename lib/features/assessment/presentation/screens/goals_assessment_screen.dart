@@ -129,7 +129,7 @@ class GoalsAssessmentScreen extends StatelessWidget {
                     if (selected != null) session.setGoal(selected);
                     await session.persist();
                     if (!context.mounted) return;
-                    context.goNamed(RouteNames.home);
+                    context.goNamed(RouteNames.assessmentAvatar);
                   },
                 ),
                 const SizedBox(height: 12),

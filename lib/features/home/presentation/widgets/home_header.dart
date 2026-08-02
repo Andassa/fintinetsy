@@ -9,11 +9,13 @@ class HomeHeader extends StatelessWidget {
     required this.user,
     required this.onSearchTap,
     required this.onNotificationTap,
+    this.onProfileTap,
   });
 
   final HomeUserGreeting user;
   final VoidCallback onSearchTap;
   final VoidCallback onNotificationTap;
+  final VoidCallback? onProfileTap;
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +39,16 @@ class HomeHeader extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: Image.asset(
-                  user.avatarAsset,
-                  width: isWide ? 64 : 52,
-                  height: isWide ? 64 : 52,
-                  fit: BoxFit.cover,
+              GestureDetector(
+                onTap: onProfileTap,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(
+                    user.avatarAsset,
+                    width: isWide ? 64 : 52,
+                    height: isWide ? 64 : 52,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(width: 14),

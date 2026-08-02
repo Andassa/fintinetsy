@@ -11,6 +11,7 @@ abstract final class RouteNames {
   static const String assessmentGender = 'assessment-gender';
   static const String assessmentVocal = 'assessment-vocal';
   static const String assessmentGoals = 'assessment-goals';
+  static const String assessmentAvatar = 'assessment-avatar';
   static const String home = 'home';
   static const String search = 'search';
   static const String noActivities = 'no-activities';
@@ -26,6 +27,16 @@ abstract final class RouteNames {
   static const String calorieStats = 'calorie-stats';
   static const String calorieIntake = 'calorie-intake';
   static const String upliftScore = 'uplift-score';
+  static const String noInternet = 'no-internet';
+  static const String permissionDenied = 'permission-denied';
+  static const String goProGate = 'go-pro-gate';
+  static const String accountSettings = 'account-settings';
+  static const String notifications = 'notifications';
+  static const String profile = 'profile';
+  static const String aiCoachIntro = 'ai-coach-intro';
+  static const String aiCoachHub = 'ai-coach-hub';
+  static const String aiChats = 'ai-chats';
+  static const String aiChatThread = 'ai-chat-thread';
 }
 
 abstract final class AppRoutes {
@@ -41,6 +52,7 @@ abstract final class AppRoutes {
   static const String assessmentGender = '/assessment/gender';
   static const String assessmentVocal = '/assessment/vocal';
   static const String assessmentGoals = '/assessment/goals';
+  static const String assessmentAvatar = '/assessment/avatar';
   static const String home = '/home';
   static const String search = '/search';
   static const String noActivities = '/activities/empty';
@@ -56,4 +68,14 @@ abstract final class AppRoutes {
   static const String calorieStats = '/stats/calorie-stats';
   static const String calorieIntake = '/stats/calorie-intake';
   static const String upliftScore = '/stats/uplift-score';
+  static const String noInternet = '/errors/no-internet';
+  static const String permissionDenied = '/errors/permission';
+  static const String goProGate = '/errors/go-pro';
+  static const String accountSettings = '/settings';
+  static const String notifications = '/notifications';
+  static const String profile = '/profile';
+  static const String aiCoachIntro = '/coach/intro';
+  static const String aiCoachHub = '/coach/hub';
+  static const String aiChats = '/coach/chats';
+  static const String aiChatThread = '/coach/chat';
 }

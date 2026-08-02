@@ -83,7 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             user: _data!.user,
                             onSearchTap: () =>
                                 context.pushNamed(RouteNames.search),
-                            onNotificationTap: () {},
+                            onNotificationTap: () =>
+                                context.pushNamed(RouteNames.notifications),
+                            onProfileTap: () =>
+                                context.pushNamed(RouteNames.profile),
                           ),
                         ),
                         SliverToBoxAdapter(
@@ -195,14 +198,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: SectionHeader(
                             title: 'Virtual AI Coach',
                             onAction: () =>
-                                context.pushNamed(RouteNames.noActivities),
+                                context.pushNamed(RouteNames.aiCoachHub),
                           ),
                         ),
                         const SliverToBoxAdapter(child: SizedBox(height: 14)),
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: AiCoachCard(coach: _data!.aiCoach),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  context.pushNamed(RouteNames.aiCoachIntro),
+                              child: AiCoachCard(coach: _data!.aiCoach),
+                            ),
                           ),
                         ),
                         SliverToBoxAdapter(

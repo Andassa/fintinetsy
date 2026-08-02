@@ -3,6 +3,8 @@ abstract final class AppAssets {
   static const String logo = 'assets/logo/Rectangle 1.svg';
   static const String welcomeBackground =
       'assets/illustration fitness equipments design background.jpg';
+  static const String profileCover =
+      'assets/illustration fitness equipments design background.png';
   static const String padlock =
       'assets/silver padlock with hole middle that says lock.png';
   static const String padlockWithKey =
@@ -35,4 +37,28 @@ abstract final class AppAssets {
       'assets/d9c9a6fea0515ce961f0d730fc76421a 1.svg';
   static const String searchNotFound =
       'assets/huella-dactilar-aislada-lupa-sobre-fondo-blanco_908985-112779 1.png';
+
+  /// Error / gate states
+  static const String noInternet =
+      'assets/Screenshot (755) 1.jpg';
+  static const String trafficCone =
+      'assets/traffic-cone-with-white-background-white-background_951778-69597.png';
+  static const String proPadlock =
+      'assets/silver-padlock-with-hole-middle-that-says-lock_899894-27949.png';
+
+  /// Avatars
+  static const String avatarLeft =
+      'assets/dd1de6d91467f98928ede3a7798dbb23.png';
+  static const String avatarCenter =
+      'assets/109be37ca6177fb5bfc38b52472f63cd 1.png';
+  static const String avatarRight =
+      'assets/ad59ff8ac64316d958da4aec2b9a13bc.png';
+
+  /// AI Coach
+  static const String aiRobot =
+      'assets/wenza-cbn-insert-1000x1000 1.png';
+  static const String aiHeaderCurves =
+      'assets/5e8d25dab76a95fdd159b8e8766cd448 1.png';
+  static const String goProBanner =
+      'assets/d41daf0a2b44836923de79c7c0f3ec3a 1.png';
 }
