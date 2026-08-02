@@ -9,6 +9,7 @@ from app.models.home import (
     HomeFeaturedWorkout,
 )
 from app.models.nutrition import Meal
+from app.models.search import SearchCatalogItem
 from app.models.settings import Notification, UserSettings
 from app.models.stats import CalorieLog, HeartRateLog, HydrationLog, UserStatsGoals
 from app.models.user import PasswordResetRequest, RefreshToken, User
@@ -45,4 +46,5 @@ __all__ = [
     "CoachMessage",
     "UserSettings",
     "Notification",
+    "SearchCatalogItem",
 ]

@@ -8,6 +8,7 @@ from app.api.v1.routers import (
     home,
     notifications,
     nutrition,
+    search,
     settings,
     stats,
     workouts,
@@ -24,3 +25,4 @@ api_router.include_router(activities.router)
 api_router.include_router(coach.router)
 api_router.include_router(settings.router)
 api_router.include_router(notifications.router)
+api_router.include_router(search.router)

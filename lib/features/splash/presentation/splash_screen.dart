@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/auth/auth_session.dart';
+import '../../../core/network/api_config.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_logo.dart';
@@ -33,7 +36,12 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
     Future<void>.delayed(const Duration(milliseconds: 2200), () {
       if (!mounted) return;
-      context.goNamed(RouteNames.welcome);
+      final session = context.read<AuthSession>();
+      if (ApiConfig.useRemoteApi && session.isAuthenticated) {
+        context.goNamed(RouteNames.home);
+      } else {
+        context.goNamed(RouteNames.welcome);
+      }
     });
   }
 

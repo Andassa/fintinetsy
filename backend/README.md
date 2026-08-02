@@ -100,6 +100,37 @@ uvicorn app.main:app --reload --port 8000
 | GET    | `/notifications`                  | Bearer (`scope`, `cursor`) |
 | PATCH  | `/notifications/{id}/read`        | Bearer |
 
+## Search
+
+| Method | Path                  | Auth   |
+| ------ | --------------------- | ------ |
+| GET    | `/search`             | public (`q`, `filter`, `cursor`) |
+| GET    | `/search/suggestions` | public (`q`) |
+
+## Cross-cutting
+
+- Auth rate limit: 5 req / 15 min / IP on `POST /auth/login` and `POST /auth/register` (429 `rate_limited`)
+- ETag + `Cache-Control` on `GET /workouts/browse`, `/assessment/config`, `/search/suggestions` (304 on `If-None-Match`)
+
+## Flutter remote API
+
+Default: FakeRepositories (offline UI demo).
+
+```bash
+# Terminal 1
+cd backend && source .venv/bin/activate && uvicorn app.main:app --reload --port 8000
+
+# Terminal 2 — iOS simulator / desktop
+flutter run --dart-define=USE_REMOTE_API=true \
+  --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
+
+# Android emulator
+flutter run --dart-define=USE_REMOTE_API=true \
+  --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
+```
+
+Wired HTTP repos: auth, home, search. Tokens in secure storage; ETag cache in Hive; GoRouter redirects to sign-in when unauthenticated.
+
 ## Tests
 
 ```bash

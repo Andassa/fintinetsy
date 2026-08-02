@@ -1,10 +1,18 @@
+import os
+
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+# Disable rate limiting for the default test suite (dedicated tests re-enable it).
+os.environ.setdefault("RATE_LIMIT_ENABLED", "false")
+
+from app.core.config import get_settings
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+
+get_settings.cache_clear()
 
 TEST_DB_URL = "sqlite+aiosqlite:///:memory:"
 

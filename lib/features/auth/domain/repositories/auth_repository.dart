@@ -20,4 +20,8 @@ abstract class AuthRepository {
   });
 
   Future<PasswordSentResult> resendPassword({required String email});
+
+  Future<void> signOut();
+
+  Future<bool> hasValidSession();
 }

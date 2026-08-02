@@ -39,11 +39,38 @@ import '../../features/workout/presentation/screens/workout_browse_screen.dart';
 import '../../features/workout/presentation/screens/workout_category_screen.dart';
 import '../../features/workout/presentation/screens/workout_complete_screen.dart';
 import '../../features/workout/presentation/screens/workout_preview_screen.dart';
+import '../auth/auth_session.dart';
+import '../network/api_config.dart';
 import 'route_names.dart';
 
-final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.splash,
-  routes: [
+GoRouter createAppRouter(AuthSession authSession) {
+  final publicPaths = <String>{
+    AppRoutes.splash,
+    AppRoutes.welcome,
+    AppRoutes.signIn,
+    AppRoutes.signUp,
+    AppRoutes.resetPassword,
+    AppRoutes.passwordSent,
+  };
+
+  return GoRouter(
+    initialLocation: AppRoutes.splash,
+    refreshListenable: authSession,
+    redirect: (context, state) {
+      if (!ApiConfig.useRemoteApi || !authSession.ready) return null;
+      final loc = state.matchedLocation;
+      final loggedIn = authSession.isAuthenticated;
+      final isPublic = publicPaths.contains(loc);
+      if (!loggedIn && !isPublic) return AppRoutes.signIn;
+      if (loggedIn &&
+          (loc == AppRoutes.signIn ||
+              loc == AppRoutes.signUp ||
+              loc == AppRoutes.welcome)) {
+        return AppRoutes.home;
+      }
+      return null;
+    },
+    routes: [
     GoRoute(
       path: AppRoutes.splash,
       name: RouteNames.splash,
@@ -262,3 +289,4 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
+}

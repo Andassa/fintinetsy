@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     cors_origins: list[str] = Field(default_factory=lambda: ["*"])
 
+    rate_limit_enabled: bool = True
+    rate_limit_auth_limit: int = 5
+    rate_limit_auth_window_seconds: int = 900
+    etag_enabled: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:

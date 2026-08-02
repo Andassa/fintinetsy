@@ -5,12 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
+from app.core.etag import ETagMiddleware
 from app.core.exceptions import AppException, app_exception_handler
 from app.db.base import Base
 from app.db.session import AsyncSessionLocal, engine
 from app import models  # noqa: F401 — register models
 from app.services.assessment_service import AssessmentService
 from app.services.home_service import HomeService
+from app.services.search_service import SearchService
 from app.services.workout_service import WorkoutService
 
 
@@ -22,6 +24,7 @@ async def lifespan(_: FastAPI):
         await AssessmentService().ensure_seed_data(session)
         await HomeService().ensure_seed_data(session)
         await WorkoutService().ensure_seed_data(session)
+        await SearchService().ensure_seed_data(session)
         await session.commit()
     yield
     await engine.dispose()
@@ -35,6 +38,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     app.add_exception_handler(AppException, app_exception_handler)
+    if settings.etag_enabled:
+        app.add_middleware(ETagMiddleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

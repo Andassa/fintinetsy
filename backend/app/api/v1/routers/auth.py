@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, Depends, Response, status
 
 from app.core.dependencies import AuthSvc, CurrentUser, DbSession
+from app.core.rate_limit import rate_limit_auth
 from app.schemas.auth import (
     AuthResponse,
     LoginRequest,
@@ -16,7 +17,12 @@ from app.schemas.auth import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/register",
+    response_model=AuthResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit_auth)],
+)
 async def register(
     body: RegisterRequest,
     session: DbSession,
@@ -30,7 +36,7 @@ async def register(
     )
 
 
-@router.post("/login", response_model=AuthResponse)
+@router.post("/login", response_model=AuthResponse, dependencies=[Depends(rate_limit_auth)])
 async def login(
     body: LoginRequest,
     session: DbSession,

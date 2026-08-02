@@ -60,4 +60,10 @@ class FakeAuthRepository implements AuthRepository {
   Future<PasswordSentResult> resendPassword({required String email}) {
     return requestPasswordReset(methodId: 'reset_email', email: email);
   }
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<bool> hasValidSession() async => false;
 }
