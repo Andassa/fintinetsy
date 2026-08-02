@@ -4,6 +4,7 @@ from app.api.v1.routers import (
     activities,
     assessment,
     auth,
+    coach,
     home,
     nutrition,
     stats,
@@ -18,3 +19,4 @@ api_router.include_router(workouts.router)
 api_router.include_router(nutrition.router)
 api_router.include_router(stats.router)
 api_router.include_router(activities.router)
+api_router.include_router(coach.router)

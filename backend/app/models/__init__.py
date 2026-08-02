@@ -1,5 +1,6 @@
 from app.models.activity import Activity
 from app.models.assessment import AssessmentConfigRow, AssessmentProfile, FitnessGoal
+from app.models.coach import CoachConversation, CoachMessage
 from app.models.home import (
     HomeActivityBlobLayout,
     HomeAiCoachCardSeed,
@@ -39,4 +40,6 @@ __all__ = [
     "HeartRateLog",
     "CalorieLog",
     "Activity",
+    "CoachConversation",
+    "CoachMessage",
 ]

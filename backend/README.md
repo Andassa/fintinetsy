@@ -82,6 +82,15 @@ uvicorn app.main:app --reload --port 8000
 | POST   | `/activities`                  | Bearer |
 | POST   | `/activities/{id}/complete`    | Bearer |
 
+## Coach
+
+| Method | Path                              | Auth   |
+| ------ | --------------------------------- | ------ |
+| GET    | `/coach/hub`                      | Bearer |
+| GET    | `/coach/chats`                    | Bearer (`tab`, `cursor`) |
+| GET    | `/coach/chats/{id}/messages`      | Bearer |
+| POST   | `/coach/chats/{id}/messages`      | Bearer |
+
 ## Tests
 
 ```bash
