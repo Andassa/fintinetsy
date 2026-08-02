@@ -7,6 +7,7 @@ from app.models.home import (
     HomeFeaturedWorkout,
 )
 from app.models.nutrition import Meal
+from app.models.stats import CalorieLog, HeartRateLog, HydrationLog, UserStatsGoals
 from app.models.user import PasswordResetRequest, RefreshToken, User
 from app.models.workout import (
     Workout,
@@ -32,4 +33,8 @@ __all__ = [
     "WorkoutBrowseSeed",
     "WorkoutSession",
     "Meal",
+    "UserStatsGoals",
+    "HydrationLog",
+    "HeartRateLog",
+    "CalorieLog",
 ]

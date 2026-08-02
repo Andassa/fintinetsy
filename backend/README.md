@@ -62,6 +62,17 @@ uvicorn app.main:app --reload --port 8000
 | GET    | `/meals/{meal_id}`| Bearer |
 | POST   | `/meals/scan`     | Bearer |
 
+## Stats
+
+| Method | Path                    | Auth   |
+| ------ | ----------------------- | ------ |
+| GET    | `/stats/hydration`      | Bearer |
+| POST   | `/stats/hydration`      | Bearer |
+| GET    | `/stats/heart-rate`     | Bearer |
+| GET    | `/stats/calories`       | Bearer |
+| GET    | `/stats/calories/intake`| Bearer |
+| GET    | `/stats/uplift-score`   | Bearer |
+
 ## Tests
 
 ```bash
