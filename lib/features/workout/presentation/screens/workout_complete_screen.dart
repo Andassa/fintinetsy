@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../domain/entities/workout_entities.dart';
 import '../../domain/repositories/workout_repository.dart';
@@ -52,10 +53,9 @@ class _WorkoutCompleteScreenState extends State<WorkoutCompleteScreen> {
               child: SizedBox(
                 height: height * 0.72,
                 width: double.infinity,
-                child: Image.asset(
+                child: AppImage(
                   data.heroAsset,
                   fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
                 ),
               ),
             ),

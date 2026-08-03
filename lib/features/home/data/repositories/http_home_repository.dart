@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_assets.dart';
+import '../../../../core/theme/media_resolver.dart';
 import '../../domain/entities/home_dashboard.dart';
 import '../../domain/repositories/home_repository.dart';
 
@@ -29,7 +31,10 @@ class HttpHomeRepository implements HomeRepository {
           kcal: user['kcal'] as int,
           hungerStatus: user['hunger_status'] as String,
           notificationCount: user['notification_count'] as int,
-          avatarAsset: user['avatar_url'] as String? ?? '',
+          avatarAsset: MediaResolver.resolve(
+            user['avatar_url'] as String?,
+            fallback: AppAssets.womanRunning,
+          ),
         ),
         categories: (data['categories'] as List<dynamic>).map((raw) {
           final c = raw as Map<String, dynamic>;
@@ -46,7 +51,10 @@ class HttpHomeRepository implements HomeRepository {
           subtitle: workout['subtitle'] as String,
           durationMin: workout['duration_minutes'] as int,
           kcal: workout['calories'] as int,
-          imageAsset: workout['image_url'] as String,
+          imageAsset: MediaResolver.resolve(
+            workout['image_url'] as String?,
+            fallback: AppAssets.workoutStrength,
+          ),
         ),
         diet: HomeDietCard(
           id: diet['id'] as String,
@@ -55,7 +63,10 @@ class HttpHomeRepository implements HomeRepository {
           durationMin: diet['duration_minutes'] as int,
           proteinG: diet['protein_g'] as int,
           fatsG: diet['fats_g'] as int,
-          imageAsset: diet['image_url'] as String,
+          imageAsset: MediaResolver.resolve(
+            diet['image_url'] as String?,
+            fallback: AppAssets.saladPlate,
+          ),
         ),
         activities: (data['activities'] as List<dynamic>).map((raw) {
           final a = raw as Map<String, dynamic>;
@@ -75,7 +86,10 @@ class HttpHomeRepository implements HomeRepository {
         aiCoach: HomeAiCoachCard(
           conversationsLabel: '${coach['conversations_count']} Conversations',
           subtitle: coach['subtitle'] as String,
-          imageAsset: coach['image_url'] as String,
+          imageAsset: MediaResolver.resolve(
+            coach['image_url'] as String?,
+            fallback: AppAssets.aiCoachHero,
+          ),
         ),
       );
     } on DioException catch (e) {

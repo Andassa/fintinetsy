@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_assets.dart';
+import '../../../../core/theme/media_resolver.dart';
 import '../../domain/entities/meal_entities.dart';
 import '../../domain/repositories/nutrition_repository.dart';
 
@@ -25,7 +27,10 @@ class HttpNutritionRepository implements NutritionRepository {
         method: data['entry_method'] == 'ai_scan'
             ? MealEntryMethod.aiScan
             : MealEntryMethod.manual,
-        imageAsset: data['image_url'] as String?,
+        imageAsset: MediaResolver.resolve(
+          data['image_url'] as String?,
+          fallback: AppAssets.powerBowl,
+        ),
       );
     } on DioException catch (e) {
       throw _map(e);
@@ -41,7 +46,10 @@ class HttpNutritionRepository implements NutritionRepository {
       );
       final data = response.data!;
       return ScanSession(
-        imageAsset: data['image_url'] as String,
+        imageAsset: MediaResolver.resolve(
+          data['image_url'] as String?,
+          fallback: AppAssets.powerBowl,
+        ),
         statusLabel: data['status_label'] as String,
         progress: (data['progress'] as num).toDouble(),
       );

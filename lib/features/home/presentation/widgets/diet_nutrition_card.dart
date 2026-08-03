@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/home_dashboard.dart';
 
 class DietNutritionCard extends StatelessWidget {
@@ -29,7 +30,7 @@ class DietNutritionCard extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1,
               child: ClipOval(
-                child: Image.asset(diet.imageAsset, fit: BoxFit.cover),
+                child: AppImage(diet.imageAsset, fit: BoxFit.cover),
               ),
             ),
           ),

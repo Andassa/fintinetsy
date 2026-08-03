@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../domain/entities/meal_entities.dart';
@@ -90,7 +91,7 @@ class _FoodScanScreenState extends State<FoodScanScreen>
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(session.imageAsset, fit: BoxFit.cover),
+                  AppImage(session.imageAsset, fit: BoxFit.cover),
                   AnimatedBuilder(
                     animation: _scan,
                     builder: (context, _) {

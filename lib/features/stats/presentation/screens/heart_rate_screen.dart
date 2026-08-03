@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../domain/entities/stats_entities.dart';
 import '../../domain/repositories/stats_repository.dart';
@@ -91,7 +92,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Image.asset(
+                      AppImage(
                         data.heroAsset,
                         fit: BoxFit.contain,
                         height: double.infinity,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/home_dashboard.dart';
 
 class WorkoutHeroCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class WorkoutHeroCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(workout.imageAsset, fit: BoxFit.cover),
+            AppImage(workout.imageAsset, fit: BoxFit.cover),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

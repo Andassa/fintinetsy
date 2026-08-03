@@ -10,6 +10,42 @@ Connected over REST with:
 - **Hive offline cache** + ETag revalidation
 - User-facing network error messages (`ApiException`)
 
+## Demo screenshots
+
+App UI captured on Android emulator. Source files live in [`docs/screenshots/`](docs/screenshots/).
+
+### Onboarding & auth
+
+| Welcome | Sign up |
+| :-----: | :-----: |
+| ![Welcome](docs/screenshots/welcome.png) | ![Sign up](docs/screenshots/singup.png) |
+
+### Assessment
+
+| Age | Weight | Fitness level | Vocal | Avatar |
+| :-: | :----: | :-----------: | :---: | :----: |
+| ![Age](docs/screenshots/age_section.png) | ![Weight](docs/screenshots/poids_section.png) | ![Fitness](docs/screenshots/rate_fitness_level.png) | ![Vocal](docs/screenshots/ai_vocal.png) | ![Avatar](docs/screenshots/Avatar_selection.png) |
+
+![Assessment overview](docs/screenshots/Assesments.png)
+
+### Home & workouts
+
+| Home | Workout |
+| :--: | :-----: |
+| ![Home](docs/screenshots/home_screen.png) | ![Workout](docs/screenshots/workout.png) |
+
+### Nutrition, stats & notifications
+
+| Add meal | Calories | Notifications (today) | Notifications (past) |
+| :------: | :------: | :-------------------: | :------------------: |
+| ![Meal](docs/screenshots/add_meal.png) | ![Calories](docs/screenshots/calorie_stat.png) | ![Notif today](docs/screenshots/notification_today.png) | ![Notif past](docs/screenshots/notification_past.png) |
+
+### AI coach
+
+| Intro | Assistant |
+| :---: | :-------: |
+| ![AI fitness](docs/screenshots/talk_to_personnal_ai_fitness.png) | ![Assistant](docs/screenshots/assistant.png) |
+
 ## Architecture
 
 ```

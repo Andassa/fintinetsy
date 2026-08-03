@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/home_dashboard.dart';
 
 class AiCoachCard extends StatelessWidget {
@@ -20,7 +21,7 @@ class AiCoachCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(coach.imageAsset, fit: BoxFit.cover),
+            AppImage(coach.imageAsset, fit: BoxFit.cover),
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

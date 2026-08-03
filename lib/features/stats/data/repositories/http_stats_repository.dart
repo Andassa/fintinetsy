@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_assets.dart';
+import '../../../../core/theme/media_resolver.dart';
 import '../../domain/entities/stats_entities.dart';
 import '../../domain/repositories/stats_repository.dart';
 
@@ -35,7 +37,10 @@ class HttpStatsRepository implements StatsRepository {
         pressureUnit: data['pressure_unit'] as String,
         oxygen: data['oxygen'] as int,
         oxygenUnit: data['oxygen_unit'] as String,
-        heroAsset: data['hero_image_url'] as String,
+        heroAsset: MediaResolver.resolve(
+          data['hero_image_url'] as String?,
+          fallback: AppAssets.basketballPlayer,
+        ),
       );
     } on DioException catch (e) {
       throw _map(e);
@@ -174,7 +179,10 @@ class HttpStatsRepository implements StatsRepository {
         instruction: data['instruction'] as String,
         distanceLeft: data['distance_left'] as String,
         arrivalLabel: data['arrival_label'] as String,
-        thumbnailAsset: data['thumbnail_url'] as String,
+        thumbnailAsset: MediaResolver.resolve(
+          data['thumbnail_url'] as String?,
+          fallback: AppAssets.workoutStrength,
+        ),
       );
     } on DioException catch (e) {
       throw _map(e);

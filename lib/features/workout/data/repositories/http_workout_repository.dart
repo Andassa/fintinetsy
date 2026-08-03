@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_assets.dart';
+import '../../../../core/theme/media_resolver.dart';
 import '../../domain/entities/workout_entities.dart';
 import '../../domain/repositories/workout_repository.dart';
 
@@ -18,7 +20,10 @@ class HttpWorkoutRepository implements WorkoutRepository {
           await _api.raw.get<Map<String, dynamic>>('/workouts/browse');
       final data = response.data!;
       return WorkoutBrowsePage(
-        heroAsset: data['hero_image_url'] as String,
+        heroAsset: MediaResolver.resolve(
+          data['hero_image_url'] as String?,
+          fallback: AppAssets.workoutBrowseHero,
+        ),
         title: data['title'] as String,
         subtitle: data['subtitle'] as String,
         activeDotIndex: data['active_dot_index'] as int,
@@ -46,7 +51,10 @@ class HttpWorkoutRepository implements WorkoutRepository {
         title: data['title'] as String,
         totalLabel: '${data['total_workouts']} Workouts',
         description: data['description'] as String,
-        headerAsset: data['header_image_url'] as String,
+        headerAsset: MediaResolver.resolve(
+          data['header_image_url'] as String?,
+          fallback: AppAssets.workoutStrength,
+        ),
         items: items.map((raw) {
           final w = raw as Map<String, dynamic>;
           return WorkoutListItem(
@@ -54,7 +62,10 @@ class HttpWorkoutRepository implements WorkoutRepository {
             title: w['title'] as String,
             totalLabel: '${w['total_exercises']} Exercises',
             repsLabel: '${w['reps']} Reps',
-            thumbnailAsset: w['thumbnail_url'] as String,
+            thumbnailAsset: MediaResolver.resolve(
+              w['thumbnail_url'] as String?,
+              fallback: AppAssets.workoutStrength,
+            ),
           );
         }).toList(),
       );
@@ -72,7 +83,10 @@ class HttpWorkoutRepository implements WorkoutRepository {
       final data = response.data!;
       _lastWorkoutId = data['id'].toString();
       return WorkoutPreviewPage(
-        heroAsset: data['hero_image_url'] as String,
+        heroAsset: MediaResolver.resolve(
+          data['hero_image_url'] as String?,
+          fallback: AppAssets.workoutPreviewHero,
+        ),
         totalLabel: '${data['total_exercises']} Exercises',
         title: data['title'] as String,
         coachLabel: data['coach_label'] as String,
@@ -95,7 +109,10 @@ class HttpWorkoutRepository implements WorkoutRepository {
       );
       final data = response.data!;
       return WorkoutCompletePage(
-        heroAsset: data['hero_image_url'] as String,
+        heroAsset: MediaResolver.resolve(
+          data['hero_image_url'] as String?,
+          fallback: AppAssets.workoutCompleteHero,
+        ),
         title: data['title'] as String,
         burnedLabel: 'Calories Burned',
         minutes: '${data['duration_minutes']}',

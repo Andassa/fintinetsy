@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/home_dashboard.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -43,11 +45,12 @@ class HomeHeader extends StatelessWidget {
                 onTap: onProfileTap,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(
+                  child: AppImage(
                     user.avatarAsset,
                     width: isWide ? 64 : 52,
                     height: isWide ? 64 : 52,
                     fit: BoxFit.cover,
+                    fallback: AppAssets.womanRunning,
                   ),
                 ),
               ),

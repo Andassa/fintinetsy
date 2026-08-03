@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../../../core/widgets/circular_icon_button.dart';
 import '../../domain/entities/workout_entities.dart';
 import '../../domain/repositories/workout_repository.dart';
@@ -56,10 +57,9 @@ class _WorkoutCategoryScreenState extends State<WorkoutCategoryScreen> {
                   Positioned.fill(
                     child: Opacity(
                       opacity: 0.4,
-                      child: Image.asset(
+                      child: AppImage(
                         data.headerAsset,
                         fit: BoxFit.cover,
-                        alignment: Alignment.topLeft,
                       ),
                     ),
                   ),
@@ -176,7 +176,7 @@ class _WorkoutCategoryScreenState extends State<WorkoutCategoryScreen> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(18),
-                                        child: Image.asset(
+                                        child: AppImage(
                                           item.thumbnailAsset,
                                           width: 72,
                                           height: 72,

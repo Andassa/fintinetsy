@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/workout_entities.dart';
 import '../../domain/repositories/workout_repository.dart';
 
@@ -45,10 +46,9 @@ class _WorkoutPreviewScreenState extends State<WorkoutPreviewScreen> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
+            AppImage(
               data.heroAsset,
               fit: BoxFit.cover,
-              alignment: Alignment.center,
             ),
             DecoratedBox(
               decoration: BoxDecoration(

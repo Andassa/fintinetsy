@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../../stats/domain/entities/stats_entities.dart';
 import '../../../stats/domain/repositories/stats_repository.dart';
 
@@ -85,7 +86,7 @@ class _DirectionsMapScreenState extends State<DirectionsMapScreen> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(14),
-                          child: Image.asset(
+                          child: AppImage(
                             data.thumbnailAsset,
                             width: 72,
                             height: 72,

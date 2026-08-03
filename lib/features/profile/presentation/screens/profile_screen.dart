@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/app_assets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_image.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/profile_repository.dart';
 
@@ -53,11 +55,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: const BorderRadius.vertical(
                         bottom: Radius.circular(30),
                       ),
-                      child: Image.asset(
+                      child: AppImage(
                         p.coverAsset,
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,
+                        fallback: AppAssets.profileCover,
                       ),
                     ),
                     Positioned(
@@ -87,7 +90,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: CircleAvatar(
                           radius: 46,
-                          backgroundImage: AssetImage(p.avatarAsset),
+                          backgroundColor: AppColors.surfaceAlt,
+                          child: ClipOval(
+                            child: AppImage(
+                              p.avatarAsset,
+                              width: 92,
+                              height: 92,
+                              fit: BoxFit.cover,
+                              fallback: AppAssets.womanRunning,
+                            ),
+                          ),
                         ),
                       ),
                     ),

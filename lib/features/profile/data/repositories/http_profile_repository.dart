@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_assets.dart';
+import '../../../../core/theme/media_resolver.dart';
 import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/profile_repository.dart';
 
@@ -47,7 +48,10 @@ class HttpProfileRepository implements ProfileRepository {
         location: 'Uplift.ai',
         membership: me['membership'] as String? ?? 'Basic Member',
         coverAsset: AppAssets.profileCover,
-        avatarAsset: me['avatar_url'] as String? ?? AppAssets.womanRunning,
+        avatarAsset: MediaResolver.resolve(
+          me['avatar_url'] as String?,
+          fallback: AppAssets.womanRunning,
+        ),
         weeklyScores: weekly,
         highlightDay: highlight.day,
         stats: [
